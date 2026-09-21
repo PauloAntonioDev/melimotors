@@ -91,10 +91,12 @@ export default function VehicleDetailPage() {
 
   async function handleLeadSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const currentVehicle = vehicle;
+    if (!currentVehicle) return;
     setSubmitting(true);
-    if (supabase && !vehicle.id.startsWith("demo-")) {
+    if (supabase && !currentVehicle.id.startsWith("demo-")) {
       await supabase.from("leads").insert({
-        vehicle_id: vehicle.id,
+        vehicle_id: currentVehicle.id,
         source: "vehicle_detail",
         name: lead.name,
         phone: lead.phone,
