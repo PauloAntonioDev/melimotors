@@ -1,0 +1,303 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ArrowRight,
+  CarFront,
+  ChevronDown,
+  Fuel,
+  Gauge,
+  KeyRound,
+  LayoutDashboard,
+  MessageCircle,
+  Search,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+} from "lucide-react";
+import { demoVehicles, vehicleImage } from "@/lib/demo-data";
+import { isSupabaseConfigured, publicStorageUrl, supabase } from "@/lib/supabase";
+import type { Vehicle } from "@/lib/types";
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+    maximumFractionDigits: 0,
+  }).format(value);
+
+const formatMileage = (value: number) =>
+  new Intl.NumberFormat("es-CL").format(value);
+
+const readableFuel = (value: string) =>
+  ({ benzina: "Bencina", diesel: "Diésel", hybrid: "Híbrido", electric: "Eléctrico" }[
+    value
+  ] ?? value);
+
+const readableTransmission = (value: string) =>
+  ({ automatic: "Automática", manual: "Manual", cvt: "CVT" }[value] ?? value);
+
+function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+  return (
+    <article className="group overflow-hidden rounded-[20px] border border-[#e8e5df] bg-white shadow-[0_14px_40px_rgba(31,35,31,0.06)] transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(31,35,31,0.12)]">
+      <Link href={`/vehiculos/${vehicle.slug}`} className="block">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#d9ddd8]">
+          <img
+            src={vehicleImage(vehicle)}
+            alt={`${vehicle.brand} ${vehicle.model}`}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+          />
+          <div className="absolute left-4 top-4 flex items-center gap-2">
+            <span className="rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#202a22] shadow-sm">
+              {vehicle.status === "reservado" ? "Reservado" : "Disponible"}
+            </span>
+          </div>
+          <span className="absolute bottom-4 right-4 rounded-full bg-[#151b17]/90 px-3 py-1.5 text-xs font-medium text-white">
+            {vehicle.stock_code}
+          </span>
+        </div>
+        <div className="space-y-5 p-5">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8b5e35]">
+              {vehicle.model_year} · {readableFuel(vehicle.fuel_type)}
+            </p>
+            <h3 className="mt-2 text-[22px] font-semibold tracking-[-0.03em] text-[#1b231d]">
+              {vehicle.brand} {vehicle.model}
+            </h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3 border-y border-[#eeeae3] py-4 text-[13px] text-[#69736a]">
+            <span className="flex min-w-0 items-center gap-1.5">
+              <Gauge size={15} aria-hidden="true" />
+              <span className="truncate">{formatMileage(vehicle.mileage_km)} km</span>
+            </span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <KeyRound size={15} aria-hidden="true" />
+              <span className="truncate">{readableTransmission(vehicle.transmission)}</span>
+            </span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <Fuel size={15} aria-hidden="true" />
+              <span className="truncate">{readableFuel(vehicle.fuel_type)}</span>
+            </span>
+          </div>
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs text-[#899188]">Precio publicado</p>
+              <p className="mt-1 text-xl font-semibold text-[#1b231d]">
+                {formatCurrency(vehicle.sale_price_clp)}
+              </p>
+            </div>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eef1ec] text-[#26372a] transition group-hover:bg-[#c94b32] group-hover:text-white">
+              <ArrowRight size={18} aria-hidden="true" />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+export default function Home() {
+  const [vehicles, setVehicles] = useState<Vehicle[]>(demoVehicles);
+  const [query, setQuery] = useState("");
+  const [brand, setBrand] = useState("Todas");
+  const [maxPrice, setMaxPrice] = useState("Todos");
+  const [loading, setLoading] = useState(isSupabaseConfigured);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    void supabase
+      .from("public_vehicle_catalog")
+      .select("*")
+      .order("published_at", { ascending: false })
+      .then(({ data }) => {
+        if (!active) return;
+        if (data?.length) {
+          setVehicles(
+            data.map((item) => ({
+              ...item,
+              cover_url: publicStorageUrl(item.cover_storage_path),
+            })) as Vehicle[],
+          );
+        }
+        setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const brands = useMemo(
+    () => ["Todas", ...Array.from(new Set(vehicles.map((vehicle) => vehicle.brand)))],
+    [vehicles],
+  );
+
+  const filteredVehicles = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return vehicles.filter((vehicle) => {
+      const matchesQuery =
+        !normalized ||
+        `${vehicle.brand} ${vehicle.model} ${vehicle.model_year}`
+          .toLowerCase()
+          .includes(normalized);
+      const matchesBrand = brand === "Todas" || vehicle.brand === brand;
+      const matchesPrice =
+        maxPrice === "Todos" || vehicle.sale_price_clp <= Number(maxPrice);
+      return matchesQuery && matchesBrand && matchesPrice;
+    });
+  }, [brand, maxPrice, query, vehicles]);
+
+  return (
+    <main className="min-h-screen overflow-x-hidden bg-[#f7f6f2] text-[#1b231d]">
+      <header className="absolute left-0 right-0 top-0 z-20 border-b border-white/15 bg-[#111813]/25 text-white backdrop-blur-md">
+        <div className="mx-auto flex h-[78px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" className="flex items-center gap-3" aria-label="Melimotors inicio">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#d45236] text-lg font-black tracking-[-0.08em] text-white">
+              M.
+            </span>
+            <span>
+              <span className="block text-[17px] font-semibold tracking-[-0.04em]">MELIMOTORS</span>
+              <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-white/65">Automotora</span>
+            </span>
+          </Link>
+          <nav className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex" aria-label="Navegación principal">
+            <a href="#inventario" className="transition hover:text-white">Inventario</a>
+            <a href="#financiamiento" className="transition hover:text-white">Financiamiento</a>
+            <a href="#contacto" className="transition hover:text-white">Contacto</a>
+          </nav>
+          <Link
+            href="/admin"
+            className="flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-white/60 hover:bg-white/10"
+          >
+            <ShieldCheck size={16} aria-hidden="true" />
+            <span className="hidden sm:inline">Administración</span>
+          </Link>
+        </div>
+      </header>
+
+      <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-[#111813] pt-[78px]">
+        <img
+          src="/melimotors-showroom.png"
+          alt="SUV en showroom Melimotors"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-[64%_center]"
+        />
+        <div className="absolute inset-0 -z-10 bg-[#111813]/65" />
+        <div className="absolute inset-0 -z-10 bg-[#111813]/20 sm:w-[68%]" />
+        <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 sm:px-8 sm:pb-24">
+          <div className="max-w-[650px] text-white">
+            <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#f0b17a]">
+              <Sparkles size={15} aria-hidden="true" />
+              Autos elegidos con criterio
+            </p>
+            <h1 className="max-w-[680px] text-[clamp(3rem,7vw,6.4rem)] font-semibold leading-[0.94] tracking-[-0.075em]">
+              Tu próximo auto empieza aquí.
+            </h1>
+            <p className="mt-7 max-w-[510px] text-base leading-7 text-white/75 sm:text-lg">
+              Vehículos revisados, información clara y acompañamiento real para comprar con tranquilidad.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <a href="#inventario" className="inline-flex items-center gap-2 rounded-full bg-[#d45236] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#b9412b]">
+                Ver inventario <ArrowRight size={17} aria-hidden="true" />
+              </a>
+              <a href="#contacto" className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
+                <MessageCircle size={17} aria-hidden="true" /> Hablar con Melimotors
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="inventario" className="mx-auto max-w-[1240px] scroll-mt-8 px-5 py-20 sm:px-8 sm:py-28">
+        <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b04e32]">Stock disponible</p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.06em] text-[#1b231d] sm:text-5xl">Encuentra el que te mueve.</h2>
+            <p className="mt-4 max-w-[560px] text-base leading-7 text-[#6d766d]">Explora nuestro inventario actual y revisa cada detalle antes de visitarnos.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-[#778078]">
+            <span className="h-2 w-2 rounded-full bg-[#42836a]" />
+            {loading ? "Actualizando inventario" : `${filteredVehicles.length} vehículos publicados`}
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-3 rounded-[18px] border border-[#e4e0d8] bg-white p-3 shadow-[0_12px_35px_rgba(31,35,31,0.04)] sm:grid-cols-[1.4fr_0.8fr_0.8fr_auto] sm:items-center">
+          <label className="relative flex items-center">
+            <Search size={18} className="pointer-events-none absolute left-4 text-[#9aa39a]" aria-hidden="true" />
+            <span className="sr-only">Buscar marca o modelo</span>
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar marca o modelo" className="h-12 w-full rounded-[12px] border border-[#ece9e2] bg-[#fbfaf7] pl-11 pr-4 text-sm text-[#1b231d] outline-none transition placeholder:text-[#9ba29b] focus:border-[#b04e32]" />
+          </label>
+          <label className="relative flex items-center">
+            <span className="sr-only">Filtrar por marca</span>
+            <select value={brand} onChange={(event) => setBrand(event.target.value)} className="h-12 w-full appearance-none rounded-[12px] border border-[#ece9e2] bg-[#fbfaf7] px-4 pr-10 text-sm text-[#4e5b50] outline-none focus:border-[#b04e32]">
+              {brands.map((item) => <option key={item}>{item}</option>)}
+            </select>
+            <ChevronDown size={17} className="pointer-events-none absolute right-4 text-[#89938a]" aria-hidden="true" />
+          </label>
+          <label className="relative flex items-center">
+            <span className="sr-only">Filtrar por precio máximo</span>
+            <select value={maxPrice} onChange={(event) => setMaxPrice(event.target.value)} className="h-12 w-full appearance-none rounded-[12px] border border-[#ece9e2] bg-[#fbfaf7] px-4 pr-10 text-sm text-[#4e5b50] outline-none focus:border-[#b04e32]">
+              <option value="Todos">Cualquier precio</option>
+              <option value="13000000">Hasta $13.000.000</option>
+              <option value="16000000">Hasta $16.000.000</option>
+              <option value="20000000">Hasta $20.000.000</option>
+            </select>
+            <ChevronDown size={17} className="pointer-events-none absolute right-4 text-[#89938a]" aria-hidden="true" />
+          </label>
+          <span className="hidden items-center justify-center px-3 text-[#89938a] sm:flex" title="Filtros de inventario">
+            <SlidersHorizontal size={19} aria-hidden="true" />
+          </span>
+        </div>
+
+        {filteredVehicles.length ? (
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredVehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}
+          </div>
+        ) : (
+          <div className="mt-8 flex min-h-[260px] flex-col items-center justify-center rounded-[20px] border border-dashed border-[#d9d6ce] bg-white text-center">
+            <CarFront size={30} className="text-[#9aa39a]" aria-hidden="true" />
+            <p className="mt-4 font-semibold text-[#344137]">No encontramos vehículos con esos filtros.</p>
+            <button onClick={() => { setQuery(""); setBrand("Todas"); setMaxPrice("Todos"); }} className="mt-3 text-sm font-semibold text-[#b04e32] hover:underline">Limpiar búsqueda</button>
+          </div>
+        )}
+      </section>
+
+      <section id="financiamiento" className="border-y border-[#e1ded6] bg-[#ecefe9]">
+        <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b04e32]">Compra a tu ritmo</p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.06em] text-[#1b231d] sm:text-5xl">Calcula una cuota que te haga sentido.</h2>
+            <p className="mt-5 max-w-[480px] text-base leading-7 text-[#69736a]">Cada vehículo incluye un cálculo referencial para que llegues a conversar con una idea clara.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {["Elige tu vehículo", "Define tu pie", "Conoce tu cuota"].map((step, index) => (
+              <div key={step} className="border-l border-[#c9d0c8] pl-4 sm:min-h-[126px]">
+                <span className="text-sm font-bold text-[#b04e32]">0{index + 1}</span>
+                <p className="mt-8 text-base font-semibold text-[#28362b]">{step}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" className="mx-auto flex max-w-[1240px] flex-col gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b04e32]">Visítanos</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#1b231d]">Conversemos sobre tu próximo auto.</h2>
+          <p className="mt-3 text-[#6d766d]">Agenda una visita o escríbenos por WhatsApp.</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#1f7659] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#185e46]"><MessageCircle size={17} aria-hidden="true" /> WhatsApp</a>
+          <Link href="/admin" className="inline-flex items-center gap-2 rounded-full border border-[#cfd6cc] px-5 py-3.5 text-sm font-semibold text-[#344137] transition hover:border-[#a4b0a3] hover:bg-white"><LayoutDashboard size={17} aria-hidden="true" /> Panel Melimotors</Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-[#e1ded6] bg-[#1b231d] text-white">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-4 px-5 py-8 text-sm text-white/60 sm:px-8 md:flex-row md:items-center md:justify-between">
+          <p><span className="font-semibold text-white">MELIMOTORS</span> · Automotora</p>
+          <p>Información referencial. Vehículos sujetos a disponibilidad.</p>
+        </div>
+      </footer>
+    </main>
+  );
+}
