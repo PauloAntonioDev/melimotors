@@ -94,6 +94,7 @@ function StatusBadge({ status }: { status: VehicleStatus }) {
 }
 
 export default function AdminPage() {
+  const localDemoMode = !isSupabaseConfigured && process.env.NODE_ENV !== "production";
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -277,6 +278,20 @@ export default function AdminPage() {
             <button className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#c94b32] text-sm font-bold text-white transition hover:bg-[#b13f29]"><LogIn size={17} aria-hidden="true" /> Ingresar</button>
           </form>
           <p className="mt-6 flex items-start gap-2 text-xs leading-5 text-[#8d968d]"><ShieldCheck size={15} className="mt-0.5 shrink-0" aria-hidden="true" /> El acceso está protegido por Supabase Auth y las políticas RLS del proyecto.</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!isSupabaseConfigured && !localDemoMode) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#1b231d] px-5 py-10 text-[#1b231d]">
+        <div className="w-full max-w-[480px] rounded-[22px] bg-[#f7f6f2] p-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.25)] sm:p-9">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#c94b32] text-xl font-black text-white">M.</div>
+          <p className="mt-8 text-xs font-bold uppercase tracking-[0.18em] text-[#b04e32]">Administración no disponible</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.06em]">Conecta Supabase para operar.</h1>
+          <p className="mt-4 text-sm leading-6 text-[#69736a]">El panel se mantiene bloqueado hasta configurar la URL y la clave pública de Supabase. El catálogo público continúa disponible.</p>
+          <Link href="/" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#c94b32] px-5 py-3.5 text-sm font-bold text-white">Volver al sitio público <ArrowLeft size={16} aria-hidden="true" /></Link>
         </div>
       </main>
     );
