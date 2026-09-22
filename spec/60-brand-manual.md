@@ -73,20 +73,26 @@ reducida aprobada; no se debe apretar ni redibujar.
 
 ## 3. Paleta cromatica
 
-La identidad base es monocromatica. Esto permite que los vehiculos, sus fotos y
-los datos comerciales sean protagonistas.
+La identidad base combina el contraste monocromatico del logo con un azul
+electrico. El azul debe comunicar confianza, tecnologia y movimiento sin
+convertirse en un fondo dominante en todas las pantallas.
 
 | Token | HEX | Uso |
 | --- | --- | --- |
-| `brand-ink` | `#050505` | Logo, fondos principales, encabezados y texto fuerte |
-| `brand-white` | `#FFFFFF` | Logo negativo, fondos limpios y texto sobre negro |
-| `brand-graphite` | `#171717` | Paneles, superficies oscuras y estados secundarios |
-| `brand-steel` | `#A7ADB4` | Bordes, metadatos y superficies tecnicas |
-| `brand-mist` | `#F3F4F4` | Fondos claros, tablas y areas de lectura |
-| `brand-signal` | `#D9A441` | Alertas comerciales, precio destacado y pequenos acentos |
+| `brand-ink` | `#050505` | Logo, texto fuerte y contrastes maximos |
+| `brand-white` | `#FFFFFF` | Logo negativo, fondos limpios y texto sobre azul oscuro |
+| `brand-navy` | `#071A33` | Header, footer, administrador y superficies de autoridad |
+| `brand-electric` | `#176BFF` | CTA principal, enlaces, acciones y estados interactivos |
+| `brand-cyan` | `#18C8FF` | Acento tecnico puntual, foco y datos destacados |
+| `brand-ice` | `#EAF4FF` | Fondos suaves, filtros y secciones de financiamiento |
+| `brand-steel` | `#A7B3BF` | Bordes, metadatos y superficies tecnicas |
+| `brand-mist` | `#F7F9FC` | Fondo general y areas de lectura |
+| `brand-signal` | `#F0B44D` | Precio destacado, alertas de margen y reserva |
 
-`brand-signal` es un acento de uso limitado. No debe convertirse en un fondo
-dominante ni competir con las fotografias de vehiculos. Los estados de negocio
+`brand-electric` es el color de accion. `brand-cyan` se reserva para pequenos
+detalles tecnicos y nunca debe competir con el CTA principal. No se usaran
+degradados como recurso de marca. `brand-signal` es un acento de uso limitado y
+no debe competir con las fotografias de vehiculos. Los estados de negocio
 pueden usar colores semanticos adicionales, siempre que mantengan contraste y
 no se presenten como colores de marca.
 
@@ -159,7 +165,24 @@ la unidad.
 
 ## 7. Iconografia y controles
 
-- Usar iconos lineales consistentes, preferentemente Lucide.
+**Libreria oficial:** Lucide React.
+
+Lucide React es el estandar para iconos de Melimotors por su trazo lineal,
+consistencia visual, tamano reducido y cobertura de las acciones del catalogo y
+del administrador. Ya forma parte de las dependencias del proyecto.
+
+Reglas de Lucide:
+
+- Usar el mismo grosor visual por contexto; no mezclar iconos rellenos con
+  iconos lineales en una misma barra.
+- Usar `currentColor` para que el icono respete el estado del control.
+- Preferir 16 a 20 px en controles, 24 px en acciones destacadas y 32 px solo
+  en estados vacios o paneles de resumen.
+- Cada icono no obvio debe tener tooltip o texto accesible.
+- No usar emojis ni dibujar SVG manuales cuando exista un icono equivalente.
+- Los iconos no reemplazan etiquetas en acciones criticas como publicar,
+  vender, archivar o eliminar.
+
 - Los iconos deben acompanarse de texto cuando la accion no sea universal.
 - Mantener tamanos de 16 a 20 px para controles y 24 px para acciones
   destacadas.
