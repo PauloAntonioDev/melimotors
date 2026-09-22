@@ -9,7 +9,8 @@ las migraciones y las pruebas deben derivarse de estos documentos.
 2. `30-use-cases.md`: acciones que el negocio permite ejecutar.
 3. `20-domain-model.md` y `40-data-contract.md`: entidades, relaciones y contratos.
 4. `50-acceptance-criteria.md`: verificacion observable.
-5. `supabase/migrations/`: implementacion reproducible de persistencia y seguridad.
+5. `60-brand-manual.md`: identidad visual, tono y criterios de interfaz.
+6. `supabase/migrations/`: implementacion reproducible de persistencia y seguridad.
 
 Si dos documentos se contradicen, se corrige primero la especificacion y luego
 se actualiza la implementacion. No se debe resolver una contradiccion solamente
