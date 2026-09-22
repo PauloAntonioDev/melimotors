@@ -12,10 +12,8 @@ import {
   Fuel,
   Gauge,
   KeyRound,
-  LayoutDashboard,
   MessageCircle,
   Search,
-  ShieldCheck,
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
@@ -153,7 +151,7 @@ export default function Home() {
 
   return (
     <main id="inicio" className="min-h-screen overflow-x-hidden bg-[#f7f9fc] text-[#071a33]">
-      <header className="absolute left-0 right-0 top-0 z-20 border-b border-white/15 bg-[#071a33]/25 text-white backdrop-blur-md">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/15 bg-[#071a33]/90 text-white shadow-[0_8px_30px_rgba(7,26,51,0.18)] backdrop-blur-md">
         <div className="mx-auto flex min-h-[78px] max-w-[1240px] flex-wrap items-center justify-between gap-y-3 px-5 py-3 sm:px-8 sm:py-0">
           <Link href="/" className="flex items-center gap-3" aria-label="Melimotors inicio">
             <img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
@@ -166,17 +164,10 @@ export default function Home() {
             <a href="#blog" className="shrink-0 transition hover:text-white">Blog</a>
             <a href="#nosotros" className="shrink-0 transition hover:text-white">Nosotros</a>
           </nav>
-          <Link
-            href="/admin"
-            className="flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-white/60 hover:bg-white/10"
-          >
-            <ShieldCheck size={16} aria-hidden="true" />
-            <span className="hidden sm:inline">Administración</span>
-          </Link>
         </div>
       </header>
 
-      <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-[#071a33] pt-[78px]">
+      <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-[#071a33] pt-[126px] md:pt-[78px]">
         <img
           src="/melimotors-showroom.png"
           alt="SUV en showroom Melimotors"
@@ -208,7 +199,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="inventario" className="mx-auto max-w-[1240px] scroll-mt-8 px-5 py-20 sm:px-8 sm:py-28">
+      <section id="inventario" className="mx-auto max-w-[1240px] scroll-mt-28 px-5 py-20 sm:px-8 sm:py-28 md:scroll-mt-24">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Stock disponible</p>
@@ -262,7 +253,7 @@ export default function Home() {
         )}
       </section>
 
-      <section id="vender" className="scroll-mt-8 bg-[#071a33] text-white">
+      <section id="vender" className="scroll-mt-28 bg-[#071a33] text-white md:scroll-mt-24">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center md:justify-between">
           <div className="max-w-[620px]">
             <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#18c8ff]"><Sparkles size={15} aria-hidden="true" /> Vende con respaldo</p>
@@ -273,7 +264,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="financiamiento" className="border-y border-[#e1ded6] bg-[#eaf4ff]">
+      <section id="financiamiento" className="scroll-mt-28 border-y border-[#e1ded6] bg-[#eaf4ff] md:scroll-mt-24">
         <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Compra a tu ritmo</p>
@@ -291,7 +282,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="blog" className="mx-auto max-w-[1240px] scroll-mt-8 px-5 py-16 sm:px-8 sm:py-20">
+      <section id="blog" className="mx-auto max-w-[1240px] scroll-mt-28 px-5 py-16 sm:px-8 sm:py-20 md:scroll-mt-24">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Blog Melimotors</p>
@@ -314,7 +305,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="nosotros" className="scroll-mt-8 border-y border-[#d9e4ef] bg-white">
+      <section id="nosotros" className="scroll-mt-28 border-y border-[#d9e4ef] bg-white md:scroll-mt-24">
         <div className="mx-auto grid max-w-[1240px] gap-8 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.8fr_1.2fr] md:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Sobre Melimotors</p>
@@ -332,7 +323,6 @@ export default function Home() {
         </div>
         <div className="flex flex-wrap gap-3">
           <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#0b8a9e] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#086a7d]"><MessageCircle size={17} aria-hidden="true" /> WhatsApp</a>
-          <Link href="/admin" className="inline-flex items-center gap-2 rounded-full border border-[#b8c9da] px-5 py-3.5 text-sm font-semibold text-[#17324f] transition hover:border-[#aebfd0] hover:bg-white"><LayoutDashboard size={17} aria-hidden="true" /> Panel Melimotors</Link>
         </div>
       </section>
 
