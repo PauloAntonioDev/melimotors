@@ -6,6 +6,9 @@ import {
   ArrowRight,
   CarFront,
   ChevronDown,
+  ClipboardCheck,
+  CircleDollarSign,
+  FileText,
   Fuel,
   Gauge,
   KeyRound,
@@ -149,16 +152,19 @@ export default function Home() {
   }, [brand, maxPrice, query, vehicles]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#f7f9fc] text-[#071a33]">
+    <main id="inicio" className="min-h-screen overflow-x-hidden bg-[#f7f9fc] text-[#071a33]">
       <header className="absolute left-0 right-0 top-0 z-20 border-b border-white/15 bg-[#071a33]/25 text-white backdrop-blur-md">
-        <div className="mx-auto flex h-[78px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
+        <div className="mx-auto flex min-h-[78px] max-w-[1240px] flex-wrap items-center justify-between gap-y-3 px-5 py-3 sm:px-8 sm:py-0">
           <Link href="/" className="flex items-center gap-3" aria-label="Melimotors inicio">
             <img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex" aria-label="Navegación principal">
-            <a href="#inventario" className="transition hover:text-white">Inventario</a>
-            <a href="#financiamiento" className="transition hover:text-white">Financiamiento</a>
-            <a href="#contacto" className="transition hover:text-white">Contacto</a>
+          <nav className="order-3 flex w-full items-center gap-6 overflow-x-auto border-t border-white/10 pt-3 text-sm font-medium text-white/80 scrollbar-none md:order-none md:w-auto md:flex-1 md:justify-center md:gap-8 md:border-0 md:pt-0" aria-label="Navegación principal">
+            <a href="#inicio" className="shrink-0 transition hover:text-white">Inicio</a>
+            <a href="#inventario" className="shrink-0 transition hover:text-white">Comprar</a>
+            <a href="#vender" className="shrink-0 transition hover:text-white">Vender</a>
+            <a href="#financiamiento" className="shrink-0 transition hover:text-white">Créditos</a>
+            <a href="#blog" className="shrink-0 transition hover:text-white">Blog</a>
+            <a href="#nosotros" className="shrink-0 transition hover:text-white">Nosotros</a>
           </nav>
           <Link
             href="/admin"
@@ -256,6 +262,17 @@ export default function Home() {
         )}
       </section>
 
+      <section id="vender" className="scroll-mt-8 bg-[#071a33] text-white">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-[620px]">
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#18c8ff]"><Sparkles size={15} aria-hidden="true" /> Vende con respaldo</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">Tu auto puede ser el próximo en nuestro inventario.</h2>
+            <p className="mt-4 text-base leading-7 text-white/70">Cuéntanos sobre tu vehículo y coordinamos una primera conversación clara, sin compromisos.</p>
+          </div>
+          <a href="#contacto" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">Quiero vender mi auto <ArrowRight size={17} aria-hidden="true" /></a>
+        </div>
+      </section>
+
       <section id="financiamiento" className="border-y border-[#e1ded6] bg-[#eaf4ff]">
         <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
@@ -271,6 +288,39 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="blog" className="mx-auto max-w-[1240px] scroll-mt-8 px-5 py-16 sm:px-8 sm:py-20">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Blog Melimotors</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#071a33] sm:text-4xl">Decisiones claras antes de moverte.</h2>
+          </div>
+          <span className="text-sm text-[#5c7082]">Consejos para comprar mejor</span>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {[
+            { icon: ClipboardCheck, title: "Qué revisar en un auto usado", text: "Una mirada práctica a los detalles que conviene comprobar antes de decidir." },
+            { icon: CircleDollarSign, title: "Cómo pensar el financiamiento", text: "Precio, pie y cuota: las variables que vale la pena conversar con calma." },
+            { icon: FileText, title: "Documentos que debes pedir", text: "La información que ayuda a comprar con más claridad y menos sorpresas." },
+          ].map(({ icon: Icon, title, text }) => (
+            <article key={title} className="rounded-[18px] border border-[#d9e4ef] bg-white p-5 shadow-[0_12px_35px_rgba(7,26,51,0.05)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#eaf4ff] text-[#176bff]"><Icon size={19} aria-hidden="true" /></span>
+              <h3 className="mt-5 text-lg font-semibold tracking-[-0.03em] text-[#071a33]">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#5c7082]">{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="nosotros" className="scroll-mt-8 border-y border-[#d9e4ef] bg-white">
+        <div className="mx-auto grid max-w-[1240px] gap-8 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Sobre Melimotors</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#071a33] sm:text-4xl">Comprar un auto también puede ser claro.</h2>
+          </div>
+          <p className="max-w-[620px] text-base leading-8 text-[#5c7082]">Somos una automotora enfocada en seleccionar vehículos, explicar la información importante y acompañar cada conversación con transparencia. Menos ruido, mejores decisiones.</p>
         </div>
       </section>
 
