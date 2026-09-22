@@ -267,7 +267,7 @@ export default function AdminPage() {
       <main className="flex min-h-screen items-center justify-center bg-[#071a33] px-5 py-10 text-[#071a33]">
         <div className="w-full max-w-[440px] rounded-[22px] bg-[#f7f9fc] p-7 shadow-[0_24px_80px_rgba(0,0,0,0.25)] sm:p-9">
           <Link href="/" className="flex items-center gap-3 text-sm font-semibold text-[#405b72]"><ArrowLeft size={16} aria-hidden="true" /> Volver al sitio público</Link>
-          <img src="/melimotors-logo-reference.png" alt="Melimotors" className="mt-12 h-12 w-[160px] object-contain object-left" />
+          <img src="/melimotors-logo.png" alt="Melimotors" className="mt-12 h-12 w-[160px] object-contain object-left" />
           <p className="mt-8 text-xs font-bold uppercase tracking-[0.18em] text-[#176bff]">Área privada</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em]">Panel Melimotors</h1>
           <p className="mt-3 text-sm leading-6 text-[#5c7082]">Ingresa con la cuenta autorizada para administrar inventario y consultas.</p>
@@ -287,7 +287,7 @@ export default function AdminPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071a33] px-5 py-10 text-[#071a33]">
         <div className="w-full max-w-[480px] rounded-[22px] bg-[#f7f9fc] p-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.25)] sm:p-9">
-          <img src="/melimotors-logo-reference.png" alt="Melimotors" className="mx-auto mt-2 h-12 w-[160px] object-contain object-center" />
+          <img src="/melimotors-logo.png" alt="Melimotors" className="mx-auto mt-2 h-12 w-[160px] object-contain object-center" />
           <p className="mt-8 text-xs font-bold uppercase tracking-[0.18em] text-[#176bff]">Administración no disponible</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-[-0.06em]">Conecta Supabase para operar.</h1>
           <p className="mt-4 text-sm leading-6 text-[#5c7082]">El panel se mantiene bloqueado hasta configurar la URL y la clave pública de Supabase. El catálogo público continúa disponible.</p>
@@ -301,7 +301,7 @@ export default function AdminPage() {
     <main className="min-h-screen bg-[#f7f9fc] text-[#071a33]">
       <div className="flex min-h-screen">
         <aside className="hidden w-[244px] shrink-0 flex-col bg-[#071a33] px-5 py-6 text-white lg:flex">
-          <Link href="/" className="flex items-center gap-3 px-2"><img src="/melimotors-logo-reference.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" /></Link>
+          <Link href="/" className="flex items-center gap-3 px-2"><img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" /></Link>
           <p className="mt-14 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">Operación</p>
           <nav className="mt-3 space-y-1" aria-label="Panel de administración">
             {[{ id: "overview", label: "Resumen e inventario", icon: LayoutDashboard }, { id: "leads", label: "Consultas", icon: MessageCircle }, { id: "settings", label: "Configuración", icon: Settings2 }].map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveView(id as typeof activeView)} className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold transition ${activeView === id ? "bg-white/12 text-white" : "text-white/60 hover:bg-white/6 hover:text-white"}`}><Icon size={17} aria-hidden="true" />{label}{id === "leads" && newLeads > 0 && <span className="ml-auto rounded-full bg-[#176bff] px-2 py-0.5 text-[11px] text-white">{newLeads}</span>}</button>)}

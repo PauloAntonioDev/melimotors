@@ -34,7 +34,7 @@ El logo recibido es un wordmark horizontal compuesto por:
 La relacion entre ambas lineas es parte de la identidad. El wordmark no debe
 reconstruirse con texto comun ni reemplazarse por una tipografia parecida.
 
-Referencia entregada: [melimotors-logo-reference.png](../public/melimotors-logo-reference.png).
+Referencia entregada: [melimotors-logo.png](../public/melimotors-logo.png).
 
 ### Versiones aprobadas
 

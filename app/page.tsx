@@ -153,7 +153,7 @@ export default function Home() {
       <header className="absolute left-0 right-0 top-0 z-20 border-b border-white/15 bg-[#071a33]/25 text-white backdrop-blur-md">
         <div className="mx-auto flex h-[78px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="Melimotors inicio">
-            <img src="/melimotors-logo-reference.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
+            <img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex" aria-label="Navegación principal">
             <a href="#inventario" className="transition hover:text-white">Inventario</a>

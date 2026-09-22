@@ -113,7 +113,7 @@ export default function VehicleDetailPage() {
       <header className="border-b border-[#d9e4ef] bg-[#071a33] text-white">
         <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="Volver a Melimotors">
-            <img src="/melimotors-logo-reference.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
+            <img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
           </Link>
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-white/75 transition hover:text-white"><ArrowLeft size={16} aria-hidden="true" /> Volver al inventario</Link>
         </div>
