@@ -19,38 +19,38 @@
 }
 
 :root {
-  --background: #f7f6f2;
-  --foreground: #1b231d;
+  --background: #f7f9fc;
+  --foreground: #071a33;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #071a33;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #c94b32;
+  --popover-foreground: #071a33;
+  --primary: #176bff;
   --primary-foreground: #ffffff;
-  --secondary: #e7ece5;
-  --secondary-foreground: #243228;
-  --muted: #eef0ec;
-  --muted-foreground: #69736a;
-  --accent: #dfe8dc;
-  --accent-foreground: #243228;
-  --destructive: #b9382d;
-  --border: #e2dfd7;
-  --input: #e2dfd7;
-  --ring: #c94b32;
-  --chart-1: #c94b32;
-  --chart-2: #1f7659;
-  --chart-3: #8b5e35;
-  --chart-4: #d7a848;
-  --chart-5: #667866;
+  --secondary: #eaf4ff;
+  --secondary-foreground: #17324f;
+  --muted: #edf3f8;
+  --muted-foreground: #5c7082;
+  --accent: #d9ecff;
+  --accent-foreground: #17324f;
+  --destructive: #d64545;
+  --border: #d9e4ef;
+  --input: #d9e4ef;
+  --ring: #176bff;
+  --chart-1: #176bff;
+  --chart-2: #18c8ff;
+  --chart-3: #0b8a9e;
+  --chart-4: #f0b44d;
+  --chart-5: #5c7082;
   --radius: 0.75rem;
-  --sidebar: #1b231d;
+  --sidebar: #071a33;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #d45236;
+  --sidebar-primary: #176bff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2b382e;
+  --sidebar-accent: #12365b;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #38473c;
-  --sidebar-ring: #d45236;
+  --sidebar-border: #244568;
+  --sidebar-ring: #18c8ff;
 }
 
 @theme inline {
@@ -89,7 +89,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 }
@@ -97,6 +97,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
   margin: 0;
+}
+
+::selection {
+  background: #176bff;
+  color: #ffffff;
 }
