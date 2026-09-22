@@ -169,9 +169,9 @@ export default function Home() {
 
       <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-[#071a33] pt-[126px] md:pt-[78px]">
         <img
-          src="/melimotors-showroom.png"
-          alt="SUV en showroom Melimotors"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-[64%_center]"
+          src="/talca.jpg"
+          alt="Entrada de Talca con el letrero de la ciudad"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 -z-10 bg-[#071a33]/65" />
         <div className="absolute inset-0 -z-10 bg-[#071a33]/20 sm:w-[68%]" />
@@ -179,10 +179,10 @@ export default function Home() {
           <div className="max-w-[650px] text-white">
             <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#18c8ff]">
               <Sparkles size={15} aria-hidden="true" />
-              Autos elegidos con criterio
+              Melimotors · Talca
             </p>
             <h1 className="max-w-[680px] text-[clamp(3rem,7vw,6.4rem)] font-semibold leading-[0.94] tracking-[-0.075em]">
-              Tu próximo auto empieza aquí.
+              Tu próximo auto empieza en Talca.
             </h1>
             <p className="mt-7 max-w-[510px] text-base leading-7 text-white/75 sm:text-lg">
               Vehículos revisados, información clara y acompañamiento real para comprar con tranquilidad.
