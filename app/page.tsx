@@ -177,14 +177,10 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-[#071a33]/20 sm:w-[68%]" />
         <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 sm:px-8 sm:pb-24">
           <div className="max-w-[650px] text-white">
-            <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#18c8ff]">
-              <Sparkles size={15} aria-hidden="true" />
-              Automotora en Talca · Autos usados
-            </p>
-            <h1 className="max-w-[680px] text-[clamp(3rem,7vw,6.4rem)] font-semibold leading-[0.94] tracking-[-0.075em]">
+            <h1 className="max-w-[680px] text-[clamp(2.65rem,5.4vw,5rem)] font-semibold leading-[0.98] tracking-[-0.075em]">
               Autos usados en Talca, elegidos con criterio.
             </h1>
-            <p className="mt-7 max-w-[510px] text-base leading-7 text-white/75 sm:text-lg">
+            <p className="mt-6 max-w-[510px] text-sm leading-6 text-white/75 sm:text-base">
               Todos nuestros vehículos pasan por una inspección rigurosa y completa antes de ser publicados, con información clara sobre su estado, precio y financiamiento referencial.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
