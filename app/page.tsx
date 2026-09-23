@@ -12,7 +12,6 @@ import {
   MessageCircle,
   Search,
   SlidersHorizontal,
-  Sparkles,
 } from "lucide-react";
 import { demoVehicles, vehicleImage } from "@/lib/demo-data";
 import { isSupabaseConfigured, publicStorageUrl, supabase } from "@/lib/supabase";
@@ -156,7 +155,6 @@ export default function Home() {
           <nav className="order-3 flex w-full items-center gap-6 overflow-x-auto border-t border-white/10 pt-3 text-sm font-medium text-white/80 scrollbar-none md:order-none md:w-auto md:flex-1 md:justify-center md:gap-8 md:border-0 md:pt-0" aria-label="Navegación principal">
             <a href="#inicio" className="shrink-0 transition hover:text-white">Inicio</a>
             <a href="#inventario" className="shrink-0 transition hover:text-white">Catálogo</a>
-            <a href="#vender" className="shrink-0 transition hover:text-white">Vender</a>
           </nav>
         </div>
       </header>
@@ -185,7 +183,7 @@ export default function Home() {
               <a href="#inventario" className="inline-flex items-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
                 Ver inventario <ArrowRight size={17} aria-hidden="true" />
               </a>
-              <a href="#contacto" className="inline-flex items-center gap-2 rounded-[10px] border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
+              <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-[10px] border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
                 <MessageCircle size={17} aria-hidden="true" /> Hablar con Melimotors
               </a>
             </div>
@@ -245,28 +243,6 @@ export default function Home() {
             <button onClick={() => { setQuery(""); setBrand("Todas"); setMaxPrice("Todos"); }} className="mt-3 text-sm font-semibold text-[#176bff] hover:underline">Limpiar búsqueda</button>
           </div>
         )}
-      </section>
-
-      <section id="vender" className="scroll-mt-28 bg-[#071a33] text-white md:scroll-mt-24">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-[620px]">
-            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#18c8ff]"><Sparkles size={15} aria-hidden="true" /> Vende con respaldo</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">Tu auto puede ser el próximo en nuestro inventario.</h2>
-            <p className="mt-4 text-base leading-7 text-white/70">Cuéntanos sobre tu vehículo y coordinamos una primera conversación clara, sin compromisos.</p>
-          </div>
-          <a href="#contacto" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">Quiero vender mi auto <ArrowRight size={17} aria-hidden="true" /></a>
-        </div>
-      </section>
-
-      <section id="contacto" className="mx-auto flex max-w-[1240px] flex-col gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Visítanos</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#071a33]">Conversemos sobre tu próximo auto.</h2>
-          <p className="mt-3 text-[#5c7082]">Agenda una visita o escríbenos por WhatsApp.</p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-            <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-[10px] bg-[#0b8a9e] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#086a7d]"><MessageCircle size={17} aria-hidden="true" /> WhatsApp</a>
-        </div>
       </section>
 
       <a
