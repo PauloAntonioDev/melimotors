@@ -15,6 +15,7 @@ import {
 import { demoVehicles, vehicleImage } from "@/lib/demo-data";
 import { isSupabaseConfigured, publicStorageUrl, supabase } from "@/lib/supabase";
 import type { Vehicle } from "@/lib/types";
+import { SiteFooter } from "@/components/site-footer";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("es-CL", {
@@ -100,6 +101,7 @@ export default function CatalogPage() {
       </section>
 
       <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" title="Escribir por WhatsApp" aria-label="Escribir por WhatsApp" className="fixed bottom-6 right-5 z-40 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[#25d366] shadow-[0_10px_28px_rgba(7,26,51,0.28)] transition hover:scale-105 sm:bottom-7 sm:right-7"><img src="/whatsapp-logo.png" alt="" className="h-14 w-14 rounded-full object-cover" /></a>
+      <SiteFooter />
     </main>
   );
 }

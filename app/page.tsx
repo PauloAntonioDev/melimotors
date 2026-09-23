@@ -16,6 +16,7 @@ import {
 import { demoVehicles, vehicleImage } from "@/lib/demo-data";
 import { isSupabaseConfigured, publicStorageUrl, supabase } from "@/lib/supabase";
 import type { Vehicle } from "@/lib/types";
+import { SiteFooter } from "@/components/site-footer";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("es-CL", {
@@ -257,12 +258,7 @@ export default function Home() {
         <img src="/whatsapp-logo.png" alt="" className="h-14 w-14 rounded-full object-cover" />
       </a>
 
-      <footer className="border-t border-[#e1ded6] bg-[#071a33] text-white">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-4 px-5 py-8 text-sm text-white/60 sm:px-8 md:flex-row md:items-center md:justify-between">
-          <p><span className="font-semibold text-white">MELIMOTORS</span> · Automotora</p>
-          <p>Información referencial. Vehículos sujetos a disponibilidad.</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
