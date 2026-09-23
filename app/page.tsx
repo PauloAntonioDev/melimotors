@@ -157,8 +157,6 @@ export default function Home() {
             <a href="#inicio" className="shrink-0 transition hover:text-white">Inicio</a>
             <a href="#inventario" className="shrink-0 transition hover:text-white">Comprar</a>
             <a href="#vender" className="shrink-0 transition hover:text-white">Vender</a>
-            <a href="#financiamiento" className="shrink-0 transition hover:text-white">Créditos</a>
-            <a href="#nosotros" className="shrink-0 transition hover:text-white">Nosotros</a>
           </nav>
         </div>
       </header>
@@ -257,34 +255,6 @@ export default function Home() {
             <p className="mt-4 text-base leading-7 text-white/70">Cuéntanos sobre tu vehículo y coordinamos una primera conversación clara, sin compromisos.</p>
           </div>
           <a href="#contacto" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">Quiero vender mi auto <ArrowRight size={17} aria-hidden="true" /></a>
-        </div>
-      </section>
-
-      <section id="financiamiento" className="scroll-mt-28 border-y border-[#e1ded6] bg-[#eaf4ff] md:scroll-mt-24">
-        <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Compra a tu ritmo</p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.06em] text-[#071a33] sm:text-5xl">Calcula una cuota que te haga sentido.</h2>
-            <p className="mt-5 max-w-[480px] text-base leading-7 text-[#5c7082]">Cada vehículo incluye un cálculo referencial para que llegues a conversar con una idea clara.</p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {["Elige tu vehículo", "Define tu pie", "Conoce tu cuota"].map((step, index) => (
-              <div key={step} className="border-l border-[#c9d0c8] pl-4 sm:min-h-[126px]">
-                <span className="text-sm font-bold text-[#176bff]">0{index + 1}</span>
-                <p className="mt-8 text-base font-semibold text-[#16334f]">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="nosotros" className="scroll-mt-28 border-y border-[#d9e4ef] bg-white md:scroll-mt-24">
-        <div className="mx-auto grid max-w-[1240px] gap-8 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.8fr_1.2fr] md:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Sobre Melimotors</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#071a33] sm:text-4xl">Comprar un auto también puede ser claro.</h2>
-          </div>
-          <p className="max-w-[620px] text-base leading-8 text-[#5c7082]">Somos una automotora enfocada en seleccionar vehículos, explicar la información importante y acompañar cada conversación con transparencia. Menos ruido, mejores decisiones.</p>
         </div>
       </section>
 
