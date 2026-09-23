@@ -168,13 +168,16 @@ export default function Home() {
       </header>
 
       <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-[#071a33] pt-[126px] md:pt-[78px]">
-        <img
-          src="/talca.jpg"
-          alt="Entrada de Talca con el letrero de la ciudad"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 -z-10 bg-[#071a33]/65" />
-        <div className="absolute inset-0 -z-10 bg-[#071a33]/20 sm:w-[68%]" />
+        <picture className="absolute inset-0 -z-20 h-full w-full">
+          <source media="(max-width: 767px)" srcSet="/melimotors-hero-mobile.png" />
+          <img
+            src="/melimotors-hero-desktop.png"
+            alt="Automóvil en venta frente al paisaje de Talca"
+            className="h-full w-full object-cover object-center"
+          />
+        </picture>
+        <div className="absolute inset-0 -z-10 bg-[#071a33]/35" />
+        <div className="absolute inset-0 -z-10 bg-[#071a33]/10 sm:w-[68%]" />
         <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 sm:px-8 sm:pb-24">
           <div className="max-w-[650px] text-white">
             <h1 className="max-w-[570px] text-[clamp(2.4rem,4.8vw,4.7rem)] font-semibold leading-[0.96] tracking-[-0.06em]">
