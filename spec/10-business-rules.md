@@ -23,18 +23,20 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 
 | ID | Regla |
 | --- | --- |
-| BR-COST-001 | Los costos son compra, transferencia, reacondicionamiento, transporte, comision, inspeccion precompra, anuncios y otros. |
+| BR-COST-001 | Los costos operativos son compra, transferencia, reacondicionamiento, transporte, inspeccion precompra, anuncios y otros. La comision se registra por separado. |
 | BR-COST-002 | Todos los costos son mayores o iguales a cero. |
-| BR-COST-003 | El costo total es la suma de los ocho componentes registrados. |
-| BR-COST-004 | El margen bruto es `precio de venta - costo total`. |
-| BR-COST-005 | El margen porcentual es `margen bruto / precio de venta * 100`. |
+| BR-COST-003 | El costo operativo total es la suma de los siete componentes registrados, sin incluir la comision. |
+| BR-COST-004 | En compra directa, la ganancia estimada de Melimotors es `precio de venta - costo operativo total`. |
+| BR-COST-005 | En consignacion, la ganancia estimada de Melimotors es `comision - costo operativo total`; su porcentaje usa el precio de venta como base. |
 | BR-COST-006 | El umbral minimo de margen es configurable y comienza en 10%. |
 | BR-COST-007 | Un margen bajo genera advertencia, pero no bloquea la publicacion. |
 | BR-COST-008 | Cambiar precio o costos recalcula el margen automaticamente. |
 | BR-COST-009 | Los costos internos nunca son publicos. |
-| BR-COST-010 | La comision se registra como porcentaje entre 0% y 100%; su monto se calcula como `precio de venta publicado * porcentaje / 100`. |
+| BR-COST-010 | La comision se registra como porcentaje entre 0% y 100% y solo se aplica cuando la modalidad es `consignacion`. |
 | BR-COST-011 | El precio minimo de venta es mayor o igual a cero y no puede superar el precio de venta publicado. |
-| BR-COST-012 | La ganancia estimada es `precio de venta publicado - costo total`; la ganancia al minimo usa el precio minimo de venta. |
+| BR-COST-012 | En consignacion, el monto estimado para el cliente es `precio de venta - comision`; Melimotors no le traspasa los costos operativos. |
+| BR-COST-013 | Los costos operativos se descuentan de la comision para calcular la ganancia neta de Melimotors en consignacion. |
+| BR-COST-014 | La ganancia al precio minimo se recalcula usando el precio minimo y la comision correspondiente a ese precio. |
 
 ## Reservas y ventas
 

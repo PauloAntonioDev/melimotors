@@ -47,12 +47,17 @@ persistencia. Los montos terminados en `_clp` son enteros `bigint`.
 | transfer_cost_clp | bigint | si | Mayor o igual a cero |
 | reconditioning_cost_clp | bigint | si | Mayor o igual a cero |
 | transport_cost_clp | bigint | si | Mayor o igual a cero |
-| commission_cost_clp | bigint | si | Mayor o igual a cero |
-| commission_pct | numeric(5,2) | si | Entre 0 y 100; determina el monto de comision |
+| commission_amount_clp | bigint | si | Monto calculado; es cero en compra directa |
+| commission_pct | numeric(5,2) | si | Entre 0 y 100; solo genera monto en consignacion |
 | other_cost_clp | bigint | si | Mayor o igual a cero |
 | inspection_pre_purchase_cost_clp | bigint | si | Mayor o igual a cero |
 | advertising_cost_clp | bigint | si | Mayor o igual a cero |
-| total_cost_clp | bigint | si | Columna generada |
+| total_cost_clp | bigint | si | Columna generada con costos operativos, sin comision |
+
+La vista administrativa `vehicle_margin_summary` expone además `commission_amount_clp`,
+`client_estimated_proceeds_clp`, `dealer_estimated_earnings_clp` y sus valores al
+precio minimo. En consignacion, los costos operativos reducen la ganancia de
+Melimotors y no el monto estimado para el cliente.
 
 ## vehicle_reservations
 

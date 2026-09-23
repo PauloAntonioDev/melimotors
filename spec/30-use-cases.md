@@ -38,12 +38,12 @@ bajo el umbral, se publica con advertencia interna.
 
 **Actor:** administrador.
 
-**Flujo:** registra o actualiza los ocho componentes de costo y el porcentaje
-de comision. El sistema calcula el monto de comision usando el precio
-publicado.
+**Flujo:** registra o actualiza los siete costos operativos y el porcentaje de
+comision. La comision solo se calcula para consignacion y usa el precio
+publicado como base.
 
-**Resultado:** el costo total, la ganancia al precio publicado y la ganancia al
-precio minimo se calculan y quedan disponibles para administracion.
+**Resultado:** el costo operativo total, el monto estimado para el cliente y la
+ganancia neta de Melimotors se calculan al precio publicado y al precio minimo.
 
 ## UC-005 Reservar vehiculo
 

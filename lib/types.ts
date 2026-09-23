@@ -26,6 +26,8 @@ export type Vehicle = {
   cost_total_clp?: number;
   gross_margin_clp?: number;
   margin_pct?: number;
+  commission_amount_clp?: number;
+  client_estimated_proceeds_clp?: number;
 };
 
 export type LeadStatus =
@@ -63,7 +65,6 @@ export type VehicleForm = {
   transfer_cost_clp: string;
   reconditioning_cost_clp: string;
   transport_cost_clp: string;
-  commission_cost_clp: string;
   commission_pct: string;
   other_cost_clp: string;
   inspection_pre_purchase_cost_clp: string;
