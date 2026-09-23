@@ -18,6 +18,7 @@ persistencia. Los montos terminados en `_clp` son enteros `bigint`.
 | transmission | text | si | `manual`, `automatic`, `cvt`, `other` |
 | description | text | si | No vacia para publicar |
 | sale_price_clp | bigint | si | Mayor que cero |
+| acquisition_type | text | si | `compra_directa` o `consignacion` |
 | status | text | si | Estados del dominio |
 | published_at | timestamptz | no | Se completa al publicar |
 | created_by | uuid | no | Usuario creador |
@@ -47,6 +48,8 @@ persistencia. Los montos terminados en `_clp` son enteros `bigint`.
 | transport_cost_clp | bigint | si | Mayor o igual a cero |
 | commission_cost_clp | bigint | si | Mayor o igual a cero |
 | other_cost_clp | bigint | si | Mayor o igual a cero |
+| inspection_pre_purchase_cost_clp | bigint | si | Mayor o igual a cero |
+| advertising_cost_clp | bigint | si | Mayor o igual a cero |
 | total_cost_clp | bigint | si | Columna generada |
 
 ## vehicle_reservations

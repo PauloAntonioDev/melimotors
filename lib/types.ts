@@ -17,6 +17,7 @@ export type Vehicle = {
   transmission: string;
   description: string;
   sale_price_clp: number;
+  acquisition_type?: "compra_directa" | "consignacion";
   status: VehicleStatus;
   published_at?: string | null;
   cover_storage_path?: string | null;
@@ -62,4 +63,7 @@ export type VehicleForm = {
   transport_cost_clp: string;
   commission_cost_clp: string;
   other_cost_clp: string;
+  inspection_pre_purchase_cost_clp: string;
+  advertising_cost_clp: string;
+  acquisition_type: "compra_directa" | "consignacion";
 };

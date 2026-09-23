@@ -23,9 +23,9 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 
 | ID | Regla |
 | --- | --- |
-| BR-COST-001 | Los costos son compra, transferencia, reacondicionamiento, transporte, comision y otros. |
+| BR-COST-001 | Los costos son compra, transferencia, reacondicionamiento, transporte, comision, inspeccion precompra, anuncios y otros. |
 | BR-COST-002 | Todos los costos son mayores o iguales a cero. |
-| BR-COST-003 | El costo total es la suma de los seis componentes. |
+| BR-COST-003 | El costo total es la suma de los ocho componentes registrados. |
 | BR-COST-004 | El margen bruto es `precio de venta - costo total`. |
 | BR-COST-005 | El margen porcentual es `margen bruto / precio de venta * 100`. |
 | BR-COST-006 | El umbral minimo de margen es configurable y comienza en 10%. |
