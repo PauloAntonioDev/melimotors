@@ -6,9 +6,6 @@ import {
   ArrowRight,
   CarFront,
   ChevronDown,
-  ClipboardCheck,
-  CircleDollarSign,
-  FileText,
   Fuel,
   Gauge,
   KeyRound,
@@ -161,7 +158,6 @@ export default function Home() {
             <a href="#inventario" className="shrink-0 transition hover:text-white">Comprar</a>
             <a href="#vender" className="shrink-0 transition hover:text-white">Vender</a>
             <a href="#financiamiento" className="shrink-0 transition hover:text-white">Créditos</a>
-            <a href="#blog" className="shrink-0 transition hover:text-white">Blog</a>
             <a href="#nosotros" className="shrink-0 transition hover:text-white">Nosotros</a>
           </nav>
         </div>
@@ -279,29 +275,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section id="blog" className="mx-auto max-w-[1240px] scroll-mt-28 px-5 py-16 sm:px-8 sm:py-20 md:scroll-mt-24">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#176bff]">Blog Melimotors</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[#071a33] sm:text-4xl">Decisiones claras antes de moverte.</h2>
-          </div>
-          <span className="text-sm text-[#5c7082]">Consejos para comprar mejor</span>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            { icon: ClipboardCheck, title: "Qué revisar en un auto usado", text: "Una mirada práctica a los detalles que conviene comprobar antes de decidir." },
-            { icon: CircleDollarSign, title: "Cómo pensar el financiamiento", text: "Precio, pie y cuota: las variables que vale la pena conversar con calma." },
-            { icon: FileText, title: "Documentos que debes pedir", text: "La información que ayuda a comprar con más claridad y menos sorpresas." },
-          ].map(({ icon: Icon, title, text }) => (
-            <article key={title} className="rounded-[18px] border border-[#d9e4ef] bg-white p-5 shadow-[0_12px_35px_rgba(7,26,51,0.05)]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#eaf4ff] text-[#176bff]"><Icon size={19} aria-hidden="true" /></span>
-              <h3 className="mt-5 text-lg font-semibold tracking-[-0.03em] text-[#071a33]">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#5c7082]">{text}</p>
-            </article>
-          ))}
         </div>
       </section>
 
