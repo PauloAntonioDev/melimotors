@@ -178,10 +178,10 @@ export default function Home() {
         <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 sm:px-8 sm:pb-24">
           <div className="max-w-[650px] text-white">
             <h1 className="max-w-[680px] text-[clamp(2.65rem,5.4vw,5rem)] font-semibold leading-[0.98] tracking-[-0.075em]">
-              Autos usados en Talca, elegidos con criterio.
+              Tu próximo auto está aquí
             </h1>
             <p className="mt-6 max-w-[510px] text-sm leading-6 text-white/75 sm:text-base">
-              Todos nuestros vehículos pasan por una inspección rigurosa y completa antes de ser publicados, con información clara sobre su estado, precio y financiamiento referencial.
+              Encuentra vehículos revisados y opciones de financiamiento adaptadas a ti en Talca.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <a href="#inventario" className="inline-flex items-center gap-2 rounded-full bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
