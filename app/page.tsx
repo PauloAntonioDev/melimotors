@@ -155,7 +155,7 @@ export default function Home() {
           </Link>
           <nav className="order-3 flex w-full items-center gap-6 overflow-x-auto border-t border-white/10 pt-3 text-sm font-medium text-white/80 scrollbar-none md:order-none md:w-auto md:flex-1 md:justify-center md:gap-8 md:border-0 md:pt-0" aria-label="Navegación principal">
             <a href="#inicio" className="shrink-0 transition hover:text-white">Inicio</a>
-            <a href="#inventario" className="shrink-0 transition hover:text-white">Comprar</a>
+            <a href="#inventario" className="shrink-0 transition hover:text-white">Catálogo</a>
             <a href="#vender" className="shrink-0 transition hover:text-white">Vender</a>
           </nav>
         </div>
