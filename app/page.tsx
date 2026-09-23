@@ -153,8 +153,9 @@ export default function Home() {
             <img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" />
           </Link>
           <nav className="order-3 flex w-full items-center gap-6 overflow-x-auto border-t border-white/10 pt-3 text-sm font-medium text-white/80 scrollbar-none md:order-none md:w-auto md:flex-1 md:justify-center md:gap-8 md:border-0 md:pt-0" aria-label="Navegación principal">
-            <a href="#inicio" className="shrink-0 transition hover:text-white">Inicio</a>
-            <a href="#inventario" className="shrink-0 transition hover:text-white">Catálogo</a>
+            <Link href="/" className="shrink-0 transition hover:text-white">Inicio</Link>
+            <Link href="/catalogo" className="shrink-0 transition hover:text-white">Catálogo</Link>
+            <Link href="/vender" className="shrink-0 transition hover:text-white">Vender</Link>
           </nav>
         </div>
       </header>
@@ -180,9 +181,9 @@ export default function Home() {
               Encuentra vehículos revisados y opciones de financiamiento adaptadas a ti en Talca.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a href="#inventario" className="inline-flex items-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
+              <Link href="/catalogo" className="inline-flex items-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
                 Ver inventario <ArrowRight size={17} aria-hidden="true" />
-              </a>
+              </Link>
               <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-[10px] border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
                 <MessageCircle size={17} aria-hidden="true" /> Hablar con Melimotors
               </a>
