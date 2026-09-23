@@ -329,9 +329,9 @@ export default function Home() {
         rel="noreferrer"
         title="Escribir por WhatsApp"
         aria-label="Escribir por WhatsApp"
-        className="fixed bottom-6 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-[0_10px_28px_rgba(7,26,51,0.28)] transition hover:scale-105 hover:bg-[#1daf57] sm:bottom-7 sm:right-7"
+        className="fixed bottom-6 right-5 z-40 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[#25d366] shadow-[0_10px_28px_rgba(7,26,51,0.28)] transition hover:scale-105 sm:bottom-7 sm:right-7"
       >
-        <MessageCircle size={25} strokeWidth={2.2} aria-hidden="true" />
+        <img src="/whatsapp-logo.png" alt="" className="h-14 w-14 rounded-full object-cover" />
       </a>
 
       <footer className="border-t border-[#e1ded6] bg-[#071a33] text-white">
