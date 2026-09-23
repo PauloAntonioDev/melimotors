@@ -7,7 +7,7 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 
 | ID | Regla |
 | --- | --- |
-| BR-VEH-001 | Cada vehiculo tiene un identificador unico de inventario. |
+| BR-VEH-001 | Cada vehiculo tiene una patente unica como identificador operativo de inventario. |
 | BR-VEH-002 | Para publicarse, un vehiculo requiere marca, modelo, anio, precio de venta, kilometraje, combustible, transmision y descripcion. |
 | BR-VEH-003 | Para publicarse, un vehiculo requiere al menos una imagen y exactamente una portada. |
 | BR-VEH-004 | El precio de venta es mayor que cero y se expresa en CLP sin decimales. |

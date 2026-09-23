@@ -8,7 +8,7 @@ persistencia. Los montos terminados en `_clp` son enteros `bigint`.
 | Campo | Tipo | Requerido | Regla |
 | --- | --- | --- | --- |
 | id | uuid | si | Identificador tecnico |
-| stock_code | text | si | Unico |
+| stock_code | text | si | Patente unica del vehiculo; se conserva este nombre tecnico por compatibilidad con la base existente. |
 | slug | text | si | Unico y publico |
 | brand | text | si | No vacio para publicar |
 | model | text | si | No vacio para publicar |

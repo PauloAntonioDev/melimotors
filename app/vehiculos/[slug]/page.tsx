@@ -121,7 +121,7 @@ export default function VehicleDetailPage() {
 
       <div className="mx-auto max-w-[1240px] px-5 py-8 sm:px-8 sm:py-12">
         <div className="mb-7 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#f0b44d]">
-          <span>{vehicle.stock_code}</span><span className="text-[#b9c8d6]">/</span><span>{isReserved ? "Reservado" : "Disponible"}</span>
+              <span>Patente {vehicle.stock_code}</span><span className="text-[#b9c8d6]">/</span><span>{isReserved ? "Reservado" : "Disponible"}</span>
         </div>
         <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
           <div>

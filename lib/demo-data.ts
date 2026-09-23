@@ -3,7 +3,7 @@ import type { Lead, Vehicle } from "./types";
 export const demoVehicles: Vehicle[] = [
   {
     id: "demo-001",
-    stock_code: "MM-001",
+    stock_code: "KJRP42",
     slug: "kia-sportage-2022",
     brand: "Kia",
     model: "Sportage EX",
@@ -23,7 +23,7 @@ export const demoVehicles: Vehicle[] = [
   },
   {
     id: "demo-002",
-    stock_code: "MM-002",
+    stock_code: "LZTM18",
     slug: "mazda-cx-5-2021",
     brand: "Mazda",
     model: "CX-5 GTX",
@@ -43,7 +43,7 @@ export const demoVehicles: Vehicle[] = [
   },
   {
     id: "demo-003",
-    stock_code: "MM-003",
+    stock_code: "PJHC77",
     slug: "toyota-corolla-2020",
     brand: "Toyota",
     model: "Corolla XEI",

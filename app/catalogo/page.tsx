@@ -37,7 +37,7 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         <div className="relative aspect-[4/3] overflow-hidden bg-[#dbe6f0]">
           <img src={vehicleImage(vehicle)} alt={`${vehicle.brand} ${vehicle.model}`} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
           <div className="absolute left-4 top-4 flex items-center gap-2"><span className="rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#071a33] shadow-sm">{vehicle.status === "reservado" ? "Reservado" : "Disponible"}</span></div>
-          <span className="absolute bottom-4 right-4 rounded-full bg-[#071a33]/90 px-3 py-1.5 text-xs font-medium text-white">{vehicle.stock_code}</span>
+          <span className="absolute bottom-4 right-4 rounded-full bg-[#071a33]/90 px-3 py-1.5 text-xs font-medium text-white">Patente {vehicle.stock_code}</span>
         </div>
         <div className="space-y-5 p-5">
           <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2b6bd9]">{vehicle.model_year} · {readableFuel(vehicle.fuel_type)}</p><h2 className="mt-2 text-[22px] font-semibold tracking-[-0.03em] text-[#071a33]">{vehicle.brand} {vehicle.model}</h2></div>

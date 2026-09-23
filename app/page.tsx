@@ -52,7 +52,7 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             </span>
           </div>
           <span className="absolute bottom-4 right-4 rounded-full bg-[#071a33]/90 px-3 py-1.5 text-xs font-medium text-white">
-            {vehicle.stock_code}
+            Patente {vehicle.stock_code}
           </span>
         </div>
         <div className="space-y-5 p-5">
