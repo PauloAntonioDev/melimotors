@@ -20,8 +20,8 @@ orden y un indicador de portada.
 
 ### VehicleCost
 
-Contiene los componentes de costo internos y expone el costo total generado.
-Tiene una relacion uno a uno con Vehicle.
+Contiene los componentes de costo internos, la comision porcentual y expone el
+costo total generado. Tiene una relacion uno a uno con Vehicle.
 
 ### VehicleReservation
 

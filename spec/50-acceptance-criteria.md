@@ -10,7 +10,7 @@ prueba de integracion de la futura aplicacion.
 | AC-003 | Un vehiculo con campos obligatorios vacios no puede publicarse. |
 | AC-004 | El catalogo publico solo devuelve `disponible` y `reservado`. |
 | AC-005 | Un usuario no admin no puede insertar, actualizar ni eliminar vehiculos. |
-| AC-006 | El costo total coincide con la suma de sus seis componentes. |
+| AC-006 | El costo total coincide con la suma de sus ocho componentes. |
 | AC-007 | El margen bruto y porcentual reflejan el precio y costo vigentes. |
 | AC-008 | Un margen menor a 10% genera advertencia sin bloquear la publicacion. |
 | AC-009 | No se puede tener mas de una portada por vehiculo. |
@@ -28,6 +28,10 @@ prueba de integracion de la futura aplicacion.
 | AC-021 | El usuario cuyo correo coincide con `admin_email` obtiene rol `admin` al registrarse. |
 | AC-022 | Las politicas RLS impiden que el cliente publico consulte tablas internas. |
 | AC-023 | La funcion de financiamiento calcula cuota cero correctamente y aplica cuota fija con tasa positiva. |
+| AC-024 | Una comision porcentual entre 0% y 100% calcula y guarda su monto sobre el precio publicado. |
+| AC-025 | Una comision menor que 0% o mayor que 100% es rechazada. |
+| AC-026 | Un precio minimo mayor que el precio publicado es rechazado. |
+| AC-027 | La vista administrativa expone ganancia al precio publicado y al precio minimo. |
 
 ## Definition of Done de esta fase
 

@@ -32,6 +32,9 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-COST-007 | Un margen bajo genera advertencia, pero no bloquea la publicacion. |
 | BR-COST-008 | Cambiar precio o costos recalcula el margen automaticamente. |
 | BR-COST-009 | Los costos internos nunca son publicos. |
+| BR-COST-010 | La comision se registra como porcentaje entre 0% y 100%; su monto se calcula como `precio de venta publicado * porcentaje / 100`. |
+| BR-COST-011 | El precio minimo de venta es mayor o igual a cero y no puede superar el precio de venta publicado. |
+| BR-COST-012 | La ganancia estimada es `precio de venta publicado - costo total`; la ganancia al minimo usa el precio minimo de venta. |
 
 ## Reservas y ventas
 

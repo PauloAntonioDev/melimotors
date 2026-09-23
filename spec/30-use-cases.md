@@ -6,8 +6,9 @@
 
 **Precondicion:** usuario autenticado con rol `admin`.
 
-**Flujo:** registra datos tecnicos, precio y descripcion. El vehiculo se crea
-como `borrador` y recibe un identificador unico de inventario.
+**Flujo:** registra datos tecnicos, precio publicado, precio minimo, modalidad
+de adquisicion y descripcion. Registra los costos y la comision porcentual. El
+vehiculo se crea como `borrador` y recibe un identificador unico de inventario.
 
 **Resultado:** existe un vehiculo editable sin visibilidad publica.
 
@@ -37,9 +38,12 @@ bajo el umbral, se publica con advertencia interna.
 
 **Actor:** administrador.
 
-**Flujo:** registra o actualiza los seis componentes de costo.
+**Flujo:** registra o actualiza los ocho componentes de costo y el porcentaje
+de comision. El sistema calcula el monto de comision usando el precio
+publicado.
 
-**Resultado:** el costo total y el margen se calculan automaticamente.
+**Resultado:** el costo total, la ganancia al precio publicado y la ganancia al
+precio minimo se calculan y quedan disponibles para administracion.
 
 ## UC-005 Reservar vehiculo
 

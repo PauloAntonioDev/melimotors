@@ -48,6 +48,8 @@ const emptyForm: VehicleForm = {
   inspection_pre_purchase_cost_clp: "0",
   advertising_cost_clp: "0",
   acquisition_type: "compra_directa",
+  minimum_sale_price_clp: "0",
+  commission_pct: "0",
 };
 
 const formatCurrency = (value: number) =>
@@ -160,11 +162,24 @@ export default function AdminPage() {
     setSaving(true);
     setNotice("");
     const numeric = (value: string) => Number(value || 0);
-    const totalCost = [form.purchase_cost_clp, form.transfer_cost_clp, form.reconditioning_cost_clp, form.transport_cost_clp, form.commission_cost_clp, form.other_cost_clp, form.inspection_pre_purchase_cost_clp, form.advertising_cost_clp].reduce((sum, value) => sum + numeric(value), 0);
+    const salePrice = numeric(form.sale_price_clp);
+    const minimumSalePrice = numeric(form.minimum_sale_price_clp);
+    const commissionPct = numeric(form.commission_pct);
+    if (minimumSalePrice > salePrice) {
+      setNotice("El precio mínimo no puede superar el precio de venta publicado.");
+      setSaving(false);
+      return;
+    }
+    if (commissionPct < 0 || commissionPct > 100) {
+      setNotice("La comisión debe estar entre 0% y 100%.");
+      setSaving(false);
+      return;
+    }
+    const commissionAmount = Math.round((salePrice * commissionPct) / 100);
+    const totalCost = [form.purchase_cost_clp, form.transfer_cost_clp, form.reconditioning_cost_clp, form.transport_cost_clp, form.other_cost_clp, form.inspection_pre_purchase_cost_clp, form.advertising_cost_clp].reduce((sum, value) => sum + numeric(value), commissionAmount);
     const slug = slugify(`${form.brand}-${form.model}-${form.model_year}-${form.stock_code}`);
 
     if (!supabase) {
-      const salePrice = numeric(form.sale_price_clp);
       const localVehicle: Vehicle = {
         id: `demo-${Date.now()}`,
         stock_code: form.stock_code,
@@ -177,6 +192,7 @@ export default function AdminPage() {
         transmission: form.transmission,
         description: form.description,
         sale_price_clp: salePrice,
+        minimum_sale_price_clp: minimumSalePrice,
         status: coverFile ? "disponible" : "borrador",
         cover_url: "/melimotors-showroom.png",
         cost_total_clp: totalCost,
@@ -203,6 +219,7 @@ export default function AdminPage() {
       transmission: form.transmission,
       description: form.description,
       sale_price_clp: numeric(form.sale_price_clp),
+      minimum_sale_price_clp: minimumSalePrice,
       acquisition_type: form.acquisition_type,
       status: "borrador",
     }).select().single();
@@ -213,17 +230,25 @@ export default function AdminPage() {
       return;
     }
 
-    await supabase.from("vehicle_costs").insert({
+    const { error: costsError } = await supabase.from("vehicle_costs").insert({
       vehicle_id: vehicle.id,
       purchase_cost_clp: numeric(form.purchase_cost_clp),
       transfer_cost_clp: numeric(form.transfer_cost_clp),
       reconditioning_cost_clp: numeric(form.reconditioning_cost_clp),
       transport_cost_clp: numeric(form.transport_cost_clp),
-      commission_cost_clp: numeric(form.commission_cost_clp),
+      commission_cost_clp: commissionAmount,
+      commission_pct: commissionPct,
       other_cost_clp: numeric(form.other_cost_clp),
       inspection_pre_purchase_cost_clp: numeric(form.inspection_pre_purchase_cost_clp),
       advertising_cost_clp: numeric(form.advertising_cost_clp),
     });
+
+    if (costsError) {
+      setNotice("El vehículo se creó, pero no pudimos guardar sus costos. Revisa los valores e inténtalo nuevamente.");
+      setSaving(false);
+      await loadData();
+      return;
+    }
 
     if (coverFile) {
       const path = `${vehicle.id}/${crypto.randomUUID()}-${coverFile.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
@@ -267,6 +292,12 @@ export default function AdminPage() {
   const totalStockValue = activeVehicles.reduce((sum, vehicle) => sum + vehicle.sale_price_clp, 0);
   const totalMargin = activeVehicles.reduce((sum, vehicle) => sum + (vehicle.gross_margin_clp ?? 0), 0);
   const newLeads = leads.filter((lead) => lead.status === "nueva").length;
+  const previewSalePrice = Number(form.sale_price_clp || 0);
+  const previewCommission = Math.round((previewSalePrice * Number(form.commission_pct || 0)) / 100);
+  const previewTotalCost = [form.purchase_cost_clp, form.transfer_cost_clp, form.reconditioning_cost_clp, form.transport_cost_clp, form.other_cost_clp, form.inspection_pre_purchase_cost_clp, form.advertising_cost_clp].reduce((sum, value) => sum + Number(value || 0), previewCommission);
+  const previewProfit = previewSalePrice - previewTotalCost;
+  const previewMinimumPrice = Number(form.minimum_sale_price_clp || 0);
+  const previewMinimumProfit = previewMinimumPrice - previewTotalCost;
 
   if (isSupabaseConfigured && !userEmail) {
     return (
@@ -338,7 +369,7 @@ export default function AdminPage() {
         </section>
       </div>
 
-      {showCreate && <div className="fixed inset-0 z-30 flex items-end justify-center bg-[#071a33]/45 p-0 backdrop-blur-sm sm:items-center sm:p-5"><div className="max-h-[92vh] w-full max-w-[780px] overflow-y-auto rounded-t-[22px] bg-[#f7f9fc] p-6 shadow-[0_24px_100px_rgba(0,0,0,0.28)] sm:rounded-[22px] sm:p-8"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Inventario</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Nuevo vehículo</h2></div><button onClick={() => setShowCreate(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d9e4ef] bg-white text-[#5c7082]" aria-label="Cerrar formulario"><X size={17} aria-hidden="true" /></button></div><form onSubmit={handleCreate} className="mt-7 space-y-5"><div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium">Patente (identificador único)<input required value={form.stock_code} onChange={(event) => setForm({ ...form, stock_code: event.target.value })} placeholder="ABCD12" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Marca<input required value={form.brand} onChange={(event) => setForm({ ...form, brand: event.target.value })} placeholder="Toyota" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Modelo<input required value={form.model} onChange={(event) => setForm({ ...form, model: event.target.value })} placeholder="Corolla XEI" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Año<input required type="number" min="1900" max="2100" value={form.model_year} onChange={(event) => setForm({ ...form, model_year: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Precio de venta<input required type="number" min="1" value={form.sale_price_clp} onChange={(event) => setForm({ ...form, sale_price_clp: event.target.value })} placeholder="15990000" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Kilometraje<input required type="number" min="0" value={form.mileage_km} onChange={(event) => setForm({ ...form, mileage_km: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label></div><div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium">Combustible<select value={form.fuel_type} onChange={(event) => setForm({ ...form, fuel_type: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="benzina">Bencina</option><option value="diesel">Diésel</option><option value="hybrid">Híbrido</option><option value="electric">Eléctrico</option></select></label><label className="block text-sm font-medium">Transmisión<select value={form.transmission} onChange={(event) => setForm({ ...form, transmission: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="automatic">Automática</option><option value="manual">Manual</option><option value="cvt">CVT</option></select></label></div><label className="block text-sm font-medium">Descripción<textarea required value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} className="mt-2 min-h-[90px] w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Modalidad de adquisición<select value={form.acquisition_type} onChange={(event) => setForm({ ...form, acquisition_type: event.target.value as VehicleForm["acquisition_type"] })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="compra_directa">Compra directa</option><option value="consignacion">Consignación</option></select></label><div><p className="text-sm font-semibold">Costos internos</p><div className="mt-3 grid gap-3 sm:grid-cols-3">{[["purchase_cost_clp", "Compra"], ["transfer_cost_clp", "Transferencia"], ["reconditioning_cost_clp", "Reacondicionamiento"], ["transport_cost_clp", "Transporte"], ["commission_cost_clp", "Comisión"], ["other_cost_clp", "Otros"], ["inspection_pre_purchase_cost_clp", "Inspección precompra"], ["advertising_cost_clp", "Anuncios"]].map(([key, label]) => <label key={key} className="block text-xs font-medium text-[#5c7082]">{label}<input type="number" min="0" value={form[key as keyof VehicleForm]} onChange={(event) => setForm({ ...form, [key]: event.target.value })} className="mt-1.5 h-10 w-full rounded-[9px] border border-[#d9e4ef] bg-white px-3 text-sm text-[#071a33] outline-none focus:border-[#176bff]" /></label>)}</div></div><label className="flex cursor-pointer items-center gap-3 rounded-[12px] border border-dashed border-[#b8c9da] bg-white px-4 py-3.5 text-sm font-semibold text-[#51687d]"><Upload size={18} aria-hidden="true" /><span className="min-w-0 flex-1 truncate">{coverFile ? coverFile.name : "Subir imagen de portada"}</span><input type="file" accept="image/*" onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)} className="sr-only" /></label><p className="flex items-center gap-2 text-xs leading-5 text-[#7c8b9a]"><ImagePlus size={14} aria-hidden="true" /> Sin portada se guardará como borrador; con portada queda listo para publicar.</p><div className="flex flex-col-reverse gap-3 border-t border-[#d9e4ef] pt-5 sm:flex-row sm:justify-end"><button type="button" onClick={() => setShowCreate(false)} className="rounded-full border border-[#b8c9da] px-5 py-3 text-sm font-semibold text-[#51687d]">Cancelar</button><button disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#176bff] px-5 py-3 text-sm font-bold text-white disabled:opacity-60">{saving ? "Guardando..." : "Guardar vehículo"} <Check size={17} aria-hidden="true" /></button></div></form></div></div>}
+      {showCreate && <div className="fixed inset-0 z-30 flex items-end justify-center bg-[#071a33]/45 p-0 backdrop-blur-sm sm:items-center sm:p-5"><div className="max-h-[92vh] w-full max-w-[780px] overflow-y-auto rounded-t-[22px] bg-[#f7f9fc] p-6 shadow-[0_24px_100px_rgba(0,0,0,0.28)] sm:rounded-[22px] sm:p-8"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Inventario</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Nuevo vehículo</h2></div><button onClick={() => setShowCreate(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d9e4ef] bg-white text-[#5c7082]" aria-label="Cerrar formulario"><X size={17} aria-hidden="true" /></button></div><form onSubmit={handleCreate} className="mt-7 space-y-5"><div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium">Patente (identificador único)<input required value={form.stock_code} onChange={(event) => setForm({ ...form, stock_code: event.target.value })} placeholder="ABCD12" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Marca<input required value={form.brand} onChange={(event) => setForm({ ...form, brand: event.target.value })} placeholder="Toyota" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Modelo<input required value={form.model} onChange={(event) => setForm({ ...form, model: event.target.value })} placeholder="Corolla XEI" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Año<input required type="number" min="1900" max="2100" value={form.model_year} onChange={(event) => setForm({ ...form, model_year: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Precio de venta publicado<input required type="number" min="1" value={form.sale_price_clp} onChange={(event) => setForm({ ...form, sale_price_clp: event.target.value })} placeholder="15990000" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Precio mínimo de venta<input type="number" min="0" value={form.minimum_sale_price_clp} onChange={(event) => setForm({ ...form, minimum_sale_price_clp: event.target.value })} placeholder="0 si no defines un mínimo" className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Kilometraje<input required type="number" min="0" value={form.mileage_km} onChange={(event) => setForm({ ...form, mileage_km: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]" /></label></div><div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-medium">Combustible<select value={form.fuel_type} onChange={(event) => setForm({ ...form, fuel_type: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="benzina">Bencina</option><option value="diesel">Diésel</option><option value="hybrid">Híbrido</option><option value="electric">Eléctrico</option></select></label><label className="block text-sm font-medium">Transmisión<select value={form.transmission} onChange={(event) => setForm({ ...form, transmission: event.target.value })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="automatic">Automática</option><option value="manual">Manual</option><option value="cvt">CVT</option></select></label></div><label className="block text-sm font-medium">Descripción<textarea required value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} className="mt-2 min-h-[90px] w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#176bff]" /></label><label className="block text-sm font-medium">Modalidad de adquisición<select value={form.acquisition_type} onChange={(event) => setForm({ ...form, acquisition_type: event.target.value as VehicleForm["acquisition_type"] })} className="mt-2 h-11 w-full rounded-[10px] border border-[#d9e4ef] bg-white px-3 text-sm outline-none focus:border-[#176bff]"><option value="compra_directa">Compra directa</option><option value="consignacion">Consignación</option></select></label><div><p className="text-sm font-semibold">Costos internos</p><div className="mt-3 grid gap-3 sm:grid-cols-3">{[["purchase_cost_clp", "Compra"], ["transfer_cost_clp", "Transferencia"], ["reconditioning_cost_clp", "Reacondicionamiento"], ["transport_cost_clp", "Transporte"], ["commission_pct", "Comisión (%)"], ["other_cost_clp", "Otros"], ["inspection_pre_purchase_cost_clp", "Inspección precompra"], ["advertising_cost_clp", "Anuncios"]].map(([key, label]) => <label key={key} className="block text-xs font-medium text-[#5c7082]">{label}<input type="number" min="0" max={key === "commission_pct" ? "100" : undefined} step={key === "commission_pct" ? "0.01" : "1"} value={form[key as keyof VehicleForm]} onChange={(event) => setForm({ ...form, [key]: event.target.value })} className="mt-1.5 h-10 w-full rounded-[9px] border border-[#d9e4ef] bg-white px-3 text-sm text-[#071a33] outline-none focus:border-[#176bff]" /></label>)}</div></div><div className="grid gap-3 rounded-[12px] border border-[#b9d0e8] bg-[#eaf4ff] p-4 text-sm sm:grid-cols-3"><div><p className="text-[#5c7082]">Comisión calculada</p><p className="mt-1 font-semibold text-[#071a33]">{formatCurrency(previewCommission)}</p></div><div><p className="text-[#5c7082]">Ganancia estimada</p><p className={`mt-1 font-semibold ${previewProfit < 0 ? "text-[#c33c3c]" : "text-[#0b8a9e]"}`}>{formatCurrency(previewProfit)}</p></div><div><p className="text-[#5c7082]">Ganancia al mínimo</p><p className={`mt-1 font-semibold ${previewMinimumProfit < 0 ? "text-[#c33c3c]" : "text-[#0b8a9e]"}`}>{previewMinimumPrice > 0 ? formatCurrency(previewMinimumProfit) : "No definido"}</p></div></div><label className="flex cursor-pointer items-center gap-3 rounded-[12px] border border-dashed border-[#b8c9da] bg-white px-4 py-3.5 text-sm font-semibold text-[#51687d]"><Upload size={18} aria-hidden="true" /><span className="min-w-0 flex-1 truncate">{coverFile ? coverFile.name : "Subir imagen de portada"}</span><input type="file" accept="image/*" onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)} className="sr-only" /></label><p className="flex items-center gap-2 text-xs leading-5 text-[#7c8b9a]"><ImagePlus size={14} aria-hidden="true" /> Sin portada se guardará como borrador; con portada queda listo para publicar.</p><div className="flex flex-col-reverse gap-3 border-t border-[#d9e4ef] pt-5 sm:flex-row sm:justify-end"><button type="button" onClick={() => setShowCreate(false)} className="rounded-full border border-[#b8c9da] px-5 py-3 text-sm font-semibold text-[#51687d]">Cancelar</button><button disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#176bff] px-5 py-3 text-sm font-bold text-white disabled:opacity-60">{saving ? "Guardando..." : "Guardar vehículo"} <Check size={17} aria-hidden="true" /></button></div></form></div></div>}
     </main>
   );
 }
