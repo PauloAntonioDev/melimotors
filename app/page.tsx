@@ -177,17 +177,18 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-[#071a33]/20 sm:w-[68%]" />
         <div className="mx-auto w-full max-w-[1240px] px-5 pb-20 sm:px-8 sm:pb-24">
           <div className="max-w-[650px] text-white">
-            <h1 className="max-w-[680px] text-[clamp(2.65rem,5.4vw,5rem)] font-semibold leading-[0.98] tracking-[-0.075em]">
-              Tu próximo auto está aquí
+            <h1 className="max-w-[570px] text-[clamp(2.4rem,4.8vw,4.7rem)] font-semibold leading-[0.96] tracking-[-0.06em]">
+              <span className="block">Tu próximo auto</span>
+              <span className="block text-[#176bff]">está aquí</span>
             </h1>
             <p className="mt-6 max-w-[510px] text-sm leading-6 text-white/75 sm:text-base">
               Encuentra vehículos revisados y opciones de financiamiento adaptadas a ti en Talca.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a href="#inventario" className="inline-flex items-center gap-2 rounded-full bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
+              <a href="#inventario" className="inline-flex items-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">
                 Ver inventario <ArrowRight size={17} aria-hidden="true" />
               </a>
-              <a href="#contacto" className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
+              <a href="#contacto" className="inline-flex items-center gap-2 rounded-[10px] border border-white/30 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
                 <MessageCircle size={17} aria-hidden="true" /> Hablar con Melimotors
               </a>
             </div>
@@ -256,7 +257,7 @@ export default function Home() {
             <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">Tu auto puede ser el próximo en nuestro inventario.</h2>
             <p className="mt-4 text-base leading-7 text-white/70">Cuéntanos sobre tu vehículo y coordinamos una primera conversación clara, sin compromisos.</p>
           </div>
-          <a href="#contacto" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">Quiero vender mi auto <ArrowRight size={17} aria-hidden="true" /></a>
+          <a href="#contacto" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[10px] bg-[#176bff] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#0d52d6]">Quiero vender mi auto <ArrowRight size={17} aria-hidden="true" /></a>
         </div>
       </section>
 
@@ -318,9 +319,20 @@ export default function Home() {
           <p className="mt-3 text-[#5c7082]">Agenda una visita o escríbenos por WhatsApp.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#0b8a9e] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#086a7d]"><MessageCircle size={17} aria-hidden="true" /> WhatsApp</a>
+            <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-[10px] bg-[#0b8a9e] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#086a7d]"><MessageCircle size={17} aria-hidden="true" /> WhatsApp</a>
         </div>
       </section>
+
+      <a
+        href="https://wa.me/56900000000"
+        target="_blank"
+        rel="noreferrer"
+        title="Escribir por WhatsApp"
+        aria-label="Escribir por WhatsApp"
+        className="fixed bottom-6 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-[0_10px_28px_rgba(7,26,51,0.28)] transition hover:scale-105 hover:bg-[#1daf57] sm:bottom-7 sm:right-7"
+      >
+        <MessageCircle size={25} strokeWidth={2.2} aria-hidden="true" />
+      </a>
 
       <footer className="border-t border-[#e1ded6] bg-[#071a33] text-white">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-4 px-5 py-8 text-sm text-white/60 sm:px-8 md:flex-row md:items-center md:justify-between">
