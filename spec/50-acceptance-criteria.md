@@ -34,6 +34,10 @@ prueba de integracion de la futura aplicacion.
 | AC-027 | En consignacion, los costos operativos se descuentan de la comision y la vista expone el monto estimado para el cliente. |
 | AC-028 | En compra directa, la comision guardada es cero y la ganancia de Melimotors es precio menos costos operativos. |
 | AC-029 | La vista administrativa expone la ganancia de Melimotors al precio publicado y al precio minimo. |
+| AC-030 | Una propuesta sin nombre o telefono es rechazada. |
+| AC-031 | Una propuesta valida queda en estado `nueva` y con origen `whatsapp` por defecto. |
+| AC-032 | Solo un administrador puede consultar y modificar propuestas. |
+| AC-033 | El administrador puede filtrar propuestas por estado y actualizarlas sin perder su fecha de ingreso. |
 
 ## Definition of Done de esta fase
 

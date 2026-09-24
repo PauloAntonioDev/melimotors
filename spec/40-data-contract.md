@@ -74,6 +74,28 @@ obligatorio.
 `name` y `phone` son obligatorios. `vehicle_id` es obligatorio cuando `source`
 es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 
+## vehicle_proposals
+
+| Campo | Tipo | Requerido | Regla |
+| --- | --- | --- | --- |
+| id | uuid | si | Identificador tecnico |
+| source | text | si | `whatsapp`, `presencial`, `referido` u `otro` |
+| status | text | si | Estado de seguimiento |
+| acquisition_type | text | si | `compra_directa` o `consignacion` |
+| seller_name | text | si | No vacio |
+| seller_phone | text | si | No vacio; se conserva como texto |
+| seller_email | text | no | Correo opcional |
+| vehicle_plate | text | no | Patente informada por la persona |
+| vehicle_brand | text | si | No vacio |
+| vehicle_model | text | si | No vacio |
+| vehicle_year | smallint | no | Entre 1900 y 2100 |
+| vehicle_mileage_km | integer | si | Mayor o igual a cero |
+| expected_price_clp | bigint | si | Mayor o igual a cero |
+| vehicle_description | text | no | Datos del vehiculo |
+| conversation_summary | text | no | Resumen del contacto por WhatsApp |
+| internal_notes | text | no | Solo administracion |
+| created_at | timestamptz | si | Fecha de ingreso |
+
 ## site_settings
 
 La clave es unica y el valor se guarda como JSONB para permitir listas y

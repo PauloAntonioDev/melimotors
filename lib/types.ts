@@ -50,6 +50,53 @@ export type Lead = {
   created_at: string;
 };
 
+export type ProposalStatus =
+  | "nueva"
+  | "en_revision"
+  | "contactada"
+  | "aceptada"
+  | "rechazada"
+  | "archivada";
+
+export type VehicleProposal = {
+  id: string;
+  source: string;
+  status: ProposalStatus;
+  acquisition_type: "compra_directa" | "consignacion";
+  seller_name: string;
+  seller_phone: string;
+  seller_email?: string | null;
+  vehicle_id?: string | null;
+  vehicle_plate?: string | null;
+  vehicle_brand: string;
+  vehicle_model: string;
+  vehicle_year?: number | null;
+  vehicle_mileage_km: number;
+  expected_price_clp: number;
+  vehicle_description?: string | null;
+  conversation_summary?: string | null;
+  internal_notes?: string | null;
+  created_at: string;
+  updated_at?: string;
+};
+
+export type VehicleProposalForm = {
+  source: "whatsapp" | "presencial" | "referido" | "otro";
+  acquisition_type: "compra_directa" | "consignacion";
+  seller_name: string;
+  seller_phone: string;
+  seller_email: string;
+  vehicle_plate: string;
+  vehicle_brand: string;
+  vehicle_model: string;
+  vehicle_year: string;
+  vehicle_mileage_km: string;
+  expected_price_clp: string;
+  vehicle_description: string;
+  conversation_summary: string;
+  internal_notes: string;
+};
+
 export type VehicleForm = {
   stock_code: string;
   brand: string;

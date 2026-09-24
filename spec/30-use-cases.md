@@ -98,3 +98,15 @@ publico.
 
 **Resultado:** los nuevos calculos y presentaciones usan la configuracion
 vigente.
+
+## UC-011 Registrar propuesta de WhatsApp
+
+**Actor:** administrador.
+
+**Precondicion:** usuario autenticado con rol `admin`.
+
+**Flujo:** registra contacto, modalidad, datos del vehiculo, precio esperado,
+resumen de la conversacion y notas internas.
+
+**Resultado:** la propuesta queda guardada en estado `nueva` y puede filtrarse,
+ordenarse y avanzar por su seguimiento comercial.

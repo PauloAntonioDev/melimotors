@@ -82,6 +82,19 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-FIN-006 | El calculo es informativo y no equivale a aprobacion bancaria. |
 | BR-FIN-007 | La tasa por defecto es configurable. |
 
+## Propuestas recibidas
+
+| ID | Regla |
+| --- | --- |
+| BR-PROP-001 | Una propuesta debe registrar nombre y teléfono de la persona. |
+| BR-PROP-002 | Una propuesta registra marca y modelo del vehículo; patente, año, kilometraje y correo son opcionales. |
+| BR-PROP-003 | El precio que espera recibir la persona es mayor o igual a cero y se guarda en CLP sin decimales. |
+| BR-PROP-004 | Toda propuesta comienza en estado `nueva`. |
+| BR-PROP-005 | Los estados permitidos son `nueva`, `en_revision`, `contactada`, `aceptada`, `rechazada` y `archivada`. |
+| BR-PROP-006 | Solo un administrador puede crear, actualizar estados y modificar notas internas de propuestas. |
+| BR-PROP-007 | El origen por defecto de una propuesta es `whatsapp` y puede clasificarse como presencial, referido u otro. |
+| BR-PROP-008 | Las propuestas se ordenan por fecha de creación descendente y pueden filtrarse por estado. |
+
 ## Acceso y auditoria
 
 | ID | Regla |

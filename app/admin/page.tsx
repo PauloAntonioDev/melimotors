@@ -26,8 +26,9 @@ import {
   X,
 } from "lucide-react";
 import { demoLeads, demoVehicles, vehicleImage } from "@/lib/demo-data";
+import AdminProposals from "@/components/admin-proposals";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
-import type { Lead, LeadStatus, Vehicle, VehicleForm, VehicleStatus } from "@/lib/types";
+import type { Lead, LeadStatus, ProposalStatus, Vehicle, VehicleForm, VehicleProposal, VehicleProposalForm, VehicleStatus } from "@/lib/types";
 
 const emptyForm: VehicleForm = {
   stock_code: "",
@@ -105,9 +106,10 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
   const [vehicles, setVehicles] = useState<Vehicle[]>(isSupabaseConfigured ? [] : demoVehicles);
   const [leads, setLeads] = useState<Lead[]>(isSupabaseConfigured ? [] : demoLeads);
+  const [proposals, setProposals] = useState<VehicleProposal[]>([]);
   const [form, setForm] = useState<VehicleForm>(emptyForm);
   const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [activeView, setActiveView] = useState<"overview" | "leads" | "settings">("overview");
+  const [activeView, setActiveView] = useState<"overview" | "leads" | "proposals" | "settings">("overview");
   const [showCreate, setShowCreate] = useState(false);
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [saving, setSaving] = useState(false);
@@ -128,9 +130,10 @@ export default function AdminPage() {
   async function loadData() {
     if (!supabase) return;
     setLoading(true);
-    const [vehicleResponse, leadResponse] = await Promise.all([
+    const [vehicleResponse, leadResponse, proposalResponse] = await Promise.all([
       supabase.from("vehicles").select("*, vehicle_costs(*)").order("created_at", { ascending: false }),
       supabase.from("leads").select("*").order("created_at", { ascending: false }),
+      supabase.from("vehicle_proposals").select("*").order("created_at", { ascending: false }),
     ]);
     if (!vehicleResponse.error) {
       setVehicles((vehicleResponse.data ?? []).map((item) => {
@@ -144,6 +147,7 @@ export default function AdminPage() {
       }));
     }
     if (!leadResponse.error) setLeads((leadResponse.data ?? []) as Lead[]);
+    if (!proposalResponse.error) setProposals((proposalResponse.data ?? []) as VehicleProposal[]);
     setLoading(false);
   }
 
@@ -294,6 +298,60 @@ export default function AdminPage() {
     await loadData();
   }
 
+  async function handleCreateProposal(proposal: VehicleProposalForm) {
+    const numeric = (value: string) => Number(value || 0);
+    if (!supabase) {
+      const localProposal: VehicleProposal = {
+        id: `proposal-${Date.now()}`,
+        ...proposal,
+        status: "nueva",
+        vehicle_id: null,
+        vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
+        vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
+        expected_price_clp: numeric(proposal.expected_price_clp),
+        created_at: new Date().toISOString(),
+      };
+      setProposals((current) => [localProposal, ...current]);
+      setNotice("Propuesta guardada en el modo demo.");
+      return true;
+    }
+
+    const { error } = await supabase.from("vehicle_proposals").insert({
+      source: proposal.source,
+      acquisition_type: proposal.acquisition_type,
+      seller_name: proposal.seller_name,
+      seller_phone: proposal.seller_phone,
+      seller_email: proposal.seller_email || null,
+      vehicle_plate: proposal.vehicle_plate || null,
+      vehicle_brand: proposal.vehicle_brand,
+      vehicle_model: proposal.vehicle_model,
+      vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
+      vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
+      expected_price_clp: numeric(proposal.expected_price_clp),
+      vehicle_description: proposal.vehicle_description || null,
+      conversation_summary: proposal.conversation_summary || null,
+      internal_notes: proposal.internal_notes || null,
+    });
+    if (error) {
+      setNotice(error.message || "No pudimos guardar la propuesta.");
+      return false;
+    }
+    setNotice("Propuesta guardada correctamente.");
+    await loadData();
+    return true;
+  }
+
+  async function handleProposalStatus(id: string, status: ProposalStatus) {
+    if (!supabase) {
+      setProposals((current) => current.map((proposal) => proposal.id === id ? { ...proposal, status } : proposal));
+      setNotice("Estado de propuesta actualizado en el modo demo.");
+      return;
+    }
+    const { error } = await supabase.from("vehicle_proposals").update({ status }).eq("id", id);
+    setNotice(error ? "No pudimos actualizar el estado de la propuesta." : "Estado de propuesta actualizado.");
+    await loadData();
+  }
+
   const activeVehicles = vehicles.filter((vehicle) => ["disponible", "reservado"].includes(vehicle.status));
   const totalStockValue = activeVehicles.reduce((sum, vehicle) => sum + vehicle.sale_price_clp, 0);
   const totalMargin = activeVehicles.reduce((sum, vehicle) => sum + (vehicle.gross_margin_clp ?? 0), 0);
@@ -349,14 +407,14 @@ export default function AdminPage() {
           <Link href="/" className="flex items-center gap-3 px-2"><img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" /></Link>
           <p className="mt-14 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">Operación</p>
           <nav className="mt-3 space-y-1" aria-label="Panel de administración">
-            {[{ id: "overview", label: "Resumen e inventario", icon: LayoutDashboard }, { id: "leads", label: "Consultas", icon: MessageCircle }, { id: "settings", label: "Configuración", icon: Settings2 }].map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveView(id as typeof activeView)} className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold transition ${activeView === id ? "bg-white/12 text-white" : "text-white/60 hover:bg-white/6 hover:text-white"}`}><Icon size={17} aria-hidden="true" />{label}{id === "leads" && newLeads > 0 && <span className="ml-auto rounded-full bg-[#176bff] px-2 py-0.5 text-[11px] text-white">{newLeads}</span>}</button>)}
+            {[{ id: "overview", label: "Resumen e inventario", icon: LayoutDashboard }, { id: "leads", label: "Consultas", icon: MessageCircle }, { id: "proposals", label: "Propuestas", icon: ClipboardList }, { id: "settings", label: "Configuración", icon: Settings2 }].map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveView(id as typeof activeView)} className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold transition ${activeView === id ? "bg-white/12 text-white" : "text-white/60 hover:bg-white/6 hover:text-white"}`}><Icon size={17} aria-hidden="true" />{label}{(id === "leads" && newLeads > 0) && <span className="ml-auto rounded-full bg-[#176bff] px-2 py-0.5 text-[11px] text-white">{newLeads}</span>}</button>)}
           </nav>
           <div className="mt-auto space-y-2 border-t border-white/10 pt-5"><Link href="/" className="flex items-center gap-3 rounded-[10px] px-3 py-3 text-sm font-semibold text-white/60 hover:bg-white/6 hover:text-white"><ExternalLink size={17} aria-hidden="true" /> Ver sitio público</Link>{isSupabaseConfigured && <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold text-white/60 hover:bg-white/6 hover:text-white"><LogOut size={17} aria-hidden="true" /> Cerrar sesión</button>}</div>
         </aside>
 
         <section className="min-w-0 flex-1">
           <header className="sticky top-0 z-10 flex h-[76px] items-center justify-between border-b border-[#d9e4ef] bg-[#f7f9fc]/95 px-5 backdrop-blur-md sm:px-8">
-            <div className="flex items-center gap-3"><button className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white lg:hidden" aria-label="Abrir menú"><Menu size={18} /></button><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Administración</p><h1 className="mt-1 text-xl font-semibold tracking-[-0.04em]">{activeView === "overview" ? "Resumen de operación" : activeView === "leads" ? "Consultas de clientes" : "Configuración"}</h1></div></div>
+            <div className="flex items-center gap-3"><button className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white lg:hidden" aria-label="Abrir menú"><Menu size={18} /></button><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Administración</p><h1 className="mt-1 text-xl font-semibold tracking-[-0.04em]">{activeView === "overview" ? "Resumen de operación" : activeView === "leads" ? "Consultas de clientes" : activeView === "proposals" ? "Propuestas de vehículos" : "Configuración"}</h1></div></div>
             <div className="flex items-center gap-3"><span className="hidden items-center gap-2 text-xs text-[#6c7c8d] sm:flex"><span className={`h-2 w-2 rounded-full ${isSupabaseConfigured ? "bg-[#0b8a9e]" : "bg-[#f0b44d]"}`} /> {isSupabaseConfigured ? userEmail : "Modo demo"}</span><Link href="/" className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white text-[#51687d]" aria-label="Ir al sitio público"><ExternalLink size={17} aria-hidden="true" /></Link></div>
           </header>
 
@@ -372,6 +430,7 @@ export default function AdminPage() {
 
             {activeView === "leads" && <div><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Seguimiento comercial</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Consultas recibidas</h2></div><span className="text-sm text-[#6c7c8d]">{leads.length} registros</span></div><div className="mt-6 space-y-3">{leads.length ? leads.map((lead) => <article key={lead.id} className="grid gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)] md:grid-cols-[1.1fr_1.2fr_0.85fr]"><div><div className="flex items-center gap-2"><span className={`h-2 w-2 rounded-full ${lead.status === "nueva" ? "bg-[#176bff]" : "bg-[#0b8a9e]"}`} /><p className="font-semibold text-[#16334f]">{lead.name}</p></div><p className="mt-2 text-sm text-[#5c7082]">{lead.phone}{lead.email ? ` · ${lead.email}` : ""}</p><p className="mt-2 text-xs text-[#8a9baa]">{new Date(lead.created_at).toLocaleDateString("es-CL")}</p></div><div className="text-sm leading-6 text-[#51687d]">{lead.message || "Sin mensaje adicional."}<a href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="mt-3 flex w-fit items-center gap-1.5 text-xs font-bold text-[#0b8a9e] hover:underline"><MessageCircle size={14} aria-hidden="true" /> Abrir WhatsApp</a></div><label className="relative block"><span className="sr-only">Cambiar estado de consulta</span><select value={lead.status} onChange={(event) => void handleLeadStatus(lead.id, event.target.value as LeadStatus)} className="h-10 w-full appearance-none rounded-[9px] border border-[#d9e4ef] bg-[#ffffff] px-3 pr-8 text-sm font-semibold text-[#51687d] outline-none focus:border-[#176bff]">{Object.entries(leadStatusLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7c8b9a]" aria-hidden="true" /></label></article>) : <div className="rounded-[16px] border border-dashed border-[#d9e4ef] bg-white p-12 text-center text-sm text-[#7c8b9a]">No hay consultas registradas.</div>}</div></div>}
 
+            {activeView === "proposals" && <AdminProposals proposals={proposals} onCreate={handleCreateProposal} onStatusChange={handleProposalStatus} />}
             {activeView === "settings" && <div className="max-w-[760px]"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Configuración</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Parámetros del negocio</h2><div className="mt-6 space-y-3"><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><Settings2 size={20} className="mt-0.5 text-[#176bff]" aria-hidden="true" /><div><p className="font-semibold">Umbral de margen</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">La especificación inicia con un umbral de 10%. La publicación se permite, pero el inventario queda marcado cuando el margen está bajo.</p></div><span className="ml-auto rounded-full bg-[#eaf4ff] px-3 py-1 text-xs font-bold text-[#51687d]">10%</span></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><ShieldCheck size={20} className="mt-0.5 text-[#0b8a9e]" aria-hidden="true" /><div><p className="font-semibold">Acceso administrativo</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los permisos dependen del rol `admin` y las políticas RLS de Supabase. El correo del primer administrador se configura en `site_settings`.</p></div></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><CircleDollarSign size={20} className="mt-0.5 text-[#f0b44d]" aria-hidden="true" /><div><p className="font-semibold">Financiamiento</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los plazos y la tasa por defecto viven en Supabase y se usan para el cálculo referencial público.</p></div></div></div></div>}
           </div>
         </section>
