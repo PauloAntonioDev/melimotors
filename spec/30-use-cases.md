@@ -108,5 +108,6 @@ vigente.
 **Flujo:** registra contacto, modalidad, datos del vehiculo, precio esperado,
 resumen de la conversacion y notas internas.
 
-**Resultado:** la propuesta queda guardada en estado `nueva` y puede filtrarse,
-ordenarse y avanzar por su seguimiento comercial.
+**Resultado:** la propuesta queda guardada en estado `nueva`, identificada por
+el WhatsApp con codigo de pais, y puede filtrarse, ordenarse y avanzar por su
+seguimiento comercial.

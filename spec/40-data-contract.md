@@ -82,6 +82,7 @@ es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 | source | text | si | `whatsapp`, `presencial`, `referido` u `otro` |
 | status | text | si | Estado de seguimiento |
 | acquisition_type | text | si | `compra_directa` o `consignacion` |
+| whatsapp_id | text | si | Numero normalizado con codigo de pais, por ejemplo `+56912345678` |
 | seller_name | text | si | No vacio |
 | seller_phone | text | si | No vacio; se conserva como texto |
 | seller_email | text | no | Correo opcional |

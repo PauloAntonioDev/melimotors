@@ -94,6 +94,7 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-006 | Solo un administrador puede crear, actualizar estados y modificar notas internas de propuestas. |
 | BR-PROP-007 | El origen por defecto de una propuesta es `whatsapp` y puede clasificarse como presencial, referido u otro. |
 | BR-PROP-008 | Las propuestas se ordenan por fecha de creación descendente y pueden filtrarse por estado. |
+| BR-PROP-009 | Cada propuesta conserva un identificador WhatsApp normalizado con código de país, por ejemplo `+56912345678`. El UUID técnico se mantiene para auditoría y relaciones. |
 
 ## Acceso y auditoria
 

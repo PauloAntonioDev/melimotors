@@ -300,10 +300,17 @@ export default function AdminPage() {
 
   async function handleCreateProposal(proposal: VehicleProposalForm) {
     const numeric = (value: string) => Number(value || 0);
+    const digits = proposal.seller_phone.replace(/\D/g, "");
+    if (digits.length < 8) {
+      setNotice("Ingresa un número WhatsApp válido con código de país.");
+      return false;
+    }
+    const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
     if (!supabase) {
       const localProposal: VehicleProposal = {
         id: `proposal-${Date.now()}`,
         ...proposal,
+        whatsapp_id: whatsappId,
         status: "nueva",
         vehicle_id: null,
         vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
@@ -319,6 +326,7 @@ export default function AdminPage() {
     const { error } = await supabase.from("vehicle_proposals").insert({
       source: proposal.source,
       acquisition_type: proposal.acquisition_type,
+      whatsapp_id: whatsappId,
       seller_name: proposal.seller_name,
       seller_phone: proposal.seller_phone,
       seller_email: proposal.seller_email || null,

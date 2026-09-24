@@ -63,6 +63,7 @@ export type VehicleProposal = {
   source: string;
   status: ProposalStatus;
   acquisition_type: "compra_directa" | "consignacion";
+  whatsapp_id: string;
   seller_name: string;
   seller_phone: string;
   seller_email?: string | null;

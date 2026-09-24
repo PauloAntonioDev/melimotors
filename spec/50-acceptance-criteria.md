@@ -38,6 +38,7 @@ prueba de integracion de la futura aplicacion.
 | AC-031 | Una propuesta valida queda en estado `nueva` y con origen `whatsapp` por defecto. |
 | AC-032 | Solo un administrador puede consultar y modificar propuestas. |
 | AC-033 | El administrador puede filtrar propuestas por estado y actualizarlas sin perder su fecha de ingreso. |
+| AC-034 | Una propuesta guarda el WhatsApp normalizado con código de país como identificador visible. |
 
 ## Definition of Done de esta fase
 
