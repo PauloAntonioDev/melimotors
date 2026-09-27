@@ -39,6 +39,8 @@ prueba de integracion de la futura aplicacion.
 | AC-032 | Solo un administrador puede consultar y modificar propuestas. |
 | AC-033 | El administrador puede filtrar propuestas por estado y actualizarlas sin perder su fecha de ingreso. |
 | AC-034 | Una propuesta guarda el WhatsApp normalizado con código de país como identificador visible. |
+| AC-035 | Un vehiculo guarda su fecha de ingreso al stock y rechaza una fecha futura. |
+| AC-036 | Los dias en stock corresponden a la diferencia entre la fecha actual y la fecha de ingreso. |
 
 ## Definition of Done de esta fase
 

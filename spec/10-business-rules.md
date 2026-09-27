@@ -18,6 +18,8 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-VEH-009 | Una reserva es manual y no vence automaticamente. |
 | BR-VEH-010 | Solo un administrador puede cambiar el estado comercial. |
 | BR-VEH-011 | Un vehiculo `vendido` no puede volver directamente a `disponible`; la correccion requiere una accion administrativa auditable. |
+| BR-VEH-012 | Cada vehiculo registra una fecha de ingreso al stock y no acepta una fecha futura. |
+| BR-VEH-013 | Los dias en stock se calculan como la diferencia entre la fecha actual y la fecha de ingreso. |
 
 ## Costos y margenes
 

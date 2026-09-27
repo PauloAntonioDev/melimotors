@@ -17,6 +17,7 @@ export type Vehicle = {
   transmission: string;
   description: string;
   sale_price_clp: number;
+  inventory_entry_date?: string;
   minimum_sale_price_clp?: number;
   acquisition_type?: "compra_directa" | "consignacion";
   status: VehicleStatus;
@@ -100,6 +101,7 @@ export type VehicleProposalForm = {
 
 export type VehicleForm = {
   stock_code: string;
+  inventory_entry_date: string;
   brand: string;
   model: string;
   model_year: string;

@@ -6,11 +6,13 @@
 
 **Precondicion:** usuario autenticado con rol `admin`.
 
-**Flujo:** registra datos tecnicos, precio publicado, precio minimo, modalidad
-de adquisicion y descripcion. Registra los costos y la comision porcentual. El
-vehiculo se crea como `borrador` y recibe un identificador unico de inventario.
+**Flujo:** registra datos tecnicos, fecha de ingreso al stock, precio publicado,
+precio minimo, modalidad de adquisicion y descripcion. Registra los costos y la
+comision porcentual. La fecha no puede ser futura. El vehiculo se crea como
+`borrador` y recibe un identificador unico de inventario.
 
-**Resultado:** existe un vehiculo editable sin visibilidad publica.
+**Resultado:** existe un vehiculo editable sin visibilidad publica y se puede
+consultar cuantos dias lleva en stock.
 
 ## UC-002 Cargar y ordenar imagenes
 

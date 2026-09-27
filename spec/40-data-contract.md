@@ -18,6 +18,7 @@ persistencia. Los montos terminados en `_clp` son enteros `bigint`.
 | transmission | text | si | `manual`, `automatic`, `cvt`, `other` |
 | description | text | si | No vacia para publicar |
 | sale_price_clp | bigint | si | Mayor que cero |
+| inventory_entry_date | date | si | Fecha de ingreso al stock; no puede ser futura |
 | minimum_sale_price_clp | bigint | si | Mayor o igual a cero y menor o igual al precio publicado |
 | acquisition_type | text | si | `compra_directa` o `consignacion` |
 | status | text | si | Estados del dominio |

@@ -11,7 +11,8 @@ quedan reservados para una ampliacion posterior.
 ### Vehicle
 
 Es la unidad principal de inventario. Contiene datos tecnicos, precio,
-identificador de stock, slug y estado comercial.
+identificador de stock, fecha de ingreso, slug y estado comercial. La fecha de
+ingreso permite calcular los dias que lleva en stock.
 
 ### VehicleImage
 
