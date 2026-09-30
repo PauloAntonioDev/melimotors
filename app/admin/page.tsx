@@ -546,7 +546,7 @@ export default function AdminPage() {
     await loadData();
   }
 
-  async function handleCreateProposal(proposal: VehicleProposalForm) {
+  async function handleSaveProposal(proposal: VehicleProposalForm, proposalId?: string | null) {
     const numeric = (value: string) => Number(value || 0);
     const optionalNumeric = (value: string) => value.trim() ? Number(value) : null;
     const digits = proposal.seller_phone.replace(/\D/g, "");
@@ -591,44 +591,18 @@ export default function AdminPage() {
       return false;
     }
     const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
-    if (!supabase) {
-      const localProposal: VehicleProposal = {
-        id: `proposal-${Date.now()}`,
-        ...proposal,
-        campaign_name: proposal.campaign_name.trim() || null,
-        campaign_code: campaignCode || null,
-        region: proposalRegion,
-        location: proposalLocation,
-        whatsapp_id: whatsappId,
-        status: "nueva",
-        vehicle_id: null,
-        vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
-        vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
-        expected_price_clp: numeric(proposal.expected_price_clp),
-        business_purchase_price_min_clp: businessPurchaseMin,
-        business_purchase_price_max_clp: businessPurchaseMax,
-        market_sale_price_min_clp: marketSaleMin,
-        market_sale_price_max_clp: marketSaleMax,
-        sellability_score: sellabilityScore,
-        created_at: new Date().toISOString(),
-      };
-      setProposals((current) => [localProposal, ...current]);
-      setNotice("Propuesta guardada en el modo demo.");
-      return true;
-    }
-
-    const { error } = await supabase.from("vehicle_proposals").insert({
+    const payload = {
       source: proposal.source,
       acquisition_type: proposal.acquisition_type,
       whatsapp_id: whatsappId,
-      seller_name: proposal.seller_name,
-      seller_phone: proposal.seller_phone,
-      seller_email: proposal.seller_email || null,
+      seller_name: proposal.seller_name.trim(),
+      seller_phone: proposal.seller_phone.trim(),
+      seller_email: proposal.seller_email.trim() || null,
       region: proposalRegion,
       location: proposalLocation,
-      vehicle_plate: proposal.vehicle_plate || null,
-      vehicle_brand: proposal.vehicle_brand,
-      vehicle_model: proposal.vehicle_model,
+      vehicle_plate: proposal.vehicle_plate.trim() || null,
+      vehicle_brand: proposal.vehicle_brand.trim(),
+      vehicle_model: proposal.vehicle_model.trim(),
       vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
       vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
       expected_price_clp: numeric(proposal.expected_price_clp),
@@ -639,17 +613,56 @@ export default function AdminPage() {
       sellability_score: sellabilityScore,
       campaign_name: proposal.campaign_name.trim() || null,
       campaign_code: campaignCode || null,
-      vehicle_description: proposal.vehicle_description || null,
-      conversation_summary: proposal.conversation_summary || null,
-      internal_notes: proposal.internal_notes || null,
-    });
+      vehicle_description: proposal.vehicle_description.trim() || null,
+      conversation_summary: proposal.conversation_summary.trim() || null,
+      internal_notes: proposal.internal_notes.trim() || null,
+    };
+
+    if (!supabase) {
+      if (proposalId) {
+        setProposals((current) => current.map((item) => item.id === proposalId ? { ...item, ...payload, updated_at: new Date().toISOString() } : item));
+      } else {
+        const localProposal: VehicleProposal = {
+          id: `proposal-${Date.now()}`,
+          ...payload,
+          status: "nueva",
+          vehicle_id: null,
+          created_at: new Date().toISOString(),
+        };
+        setProposals((current) => [localProposal, ...current]);
+      }
+      setNotice(proposalId ? "Propuesta actualizada en el modo demo." : "Propuesta guardada en el modo demo.");
+      return true;
+    }
+
+    const { error } = proposalId
+      ? await supabase.from("vehicle_proposals").update(payload).eq("id", proposalId)
+      : await supabase.from("vehicle_proposals").insert(payload);
     if (error) {
-      setNotice(error.message || "No pudimos guardar la propuesta.");
+      setNotice(error.message || `No pudimos ${proposalId ? "actualizar" : "guardar"} la propuesta.`);
       return false;
     }
-    setNotice("Propuesta guardada correctamente.");
+    setNotice(proposalId ? "Propuesta actualizada correctamente." : "Propuesta guardada correctamente.");
     await loadData();
     return true;
+  }
+
+  async function handleDeleteProposal(proposal: VehicleProposal) {
+    if (!window.confirm(`¿Eliminar la propuesta de ${proposal.vehicle_brand} ${proposal.vehicle_model}?`)) return;
+
+    if (!supabase) {
+      setProposals((current) => current.filter((item) => item.id !== proposal.id));
+      setNotice("Propuesta eliminada en el modo demo.");
+      return;
+    }
+
+    const { error } = await supabase.from("vehicle_proposals").delete().eq("id", proposal.id);
+    if (error) {
+      setNotice("No pudimos eliminar la propuesta.");
+      return;
+    }
+    setProposals((current) => current.filter((item) => item.id !== proposal.id));
+    setNotice("Propuesta eliminada.");
   }
 
   async function handleProposalStatus(id: string, status: ProposalStatus) {
@@ -742,7 +755,7 @@ export default function AdminPage() {
             {activeView === "leads" && <div><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Seguimiento comercial</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Consultas recibidas</h2></div><span className="text-sm text-[#6c7c8d]">{leads.length} registros</span></div><div className="mt-6 space-y-3">{leads.length ? leads.map((lead) => <article key={lead.id} className="grid gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)] md:grid-cols-[1.1fr_1.2fr_0.85fr]"><div><div className="flex items-center gap-2"><span className={`h-2 w-2 rounded-full ${lead.status === "nueva" ? "bg-[#176bff]" : "bg-[#0b8a9e]"}`} /><p className="font-semibold text-[#16334f]">{lead.name}</p></div><p className="mt-2 text-sm text-[#5c7082]">{lead.phone}{lead.email ? ` · ${lead.email}` : ""}</p><p className="mt-2 text-xs text-[#8a9baa]">{new Date(lead.created_at).toLocaleDateString("es-CL")}</p></div><div className="text-sm leading-6 text-[#51687d]">{lead.message || "Sin mensaje adicional."}<a href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="mt-3 flex w-fit items-center gap-1.5 text-xs font-bold text-[#0b8a9e] hover:underline"><MessageCircle size={14} aria-hidden="true" /> Abrir WhatsApp</a></div><label className="relative block"><span className="sr-only">Cambiar estado de consulta</span><select value={lead.status} onChange={(event) => void handleLeadStatus(lead.id, event.target.value as LeadStatus)} className="h-10 w-full appearance-none rounded-[9px] border border-[#d9e4ef] bg-[#ffffff] px-3 pr-8 text-sm font-semibold text-[#51687d] outline-none focus:border-[#176bff]">{Object.entries(leadStatusLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7c8b9a]" aria-hidden="true" /></label></article>) : <div className="rounded-[16px] border border-dashed border-[#d9e4ef] bg-white p-12 text-center text-sm text-[#7c8b9a]">No hay consultas registradas.</div>}</div></div>}
 
             {activeView === "sales" && <AdminSales key={saleVehicleId ?? "sales"} vehicles={vehicles} sales={sales} documents={saleDocuments} initialVehicleId={saleVehicleId} onCloseRequested={() => setSaleVehicleId(null)} onSave={handleSaveSale} onOpenDocument={handleOpenSaleDocument} onDeleteDocument={handleDeleteSaleDocument} />}
-            {activeView === "proposals" && <AdminProposals proposals={proposals} onCreate={handleCreateProposal} onStatusChange={handleProposalStatus} />}
+            {activeView === "proposals" && <AdminProposals proposals={proposals} onSave={handleSaveProposal} onDelete={handleDeleteProposal} onStatusChange={handleProposalStatus} />}
             {activeView === "settings" && <div className="max-w-[760px]"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Configuración</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Parámetros del negocio</h2><div className="mt-6 space-y-3"><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><Settings2 size={20} className="mt-0.5 text-[#176bff]" aria-hidden="true" /><div><p className="font-semibold">Umbral de margen</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">La especificación inicia con un umbral de 10%. La publicación se permite, pero el inventario queda marcado cuando el margen está bajo.</p></div><span className="ml-auto rounded-full bg-[#eaf4ff] px-3 py-1 text-xs font-bold text-[#51687d]">10%</span></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><ShieldCheck size={20} className="mt-0.5 text-[#0b8a9e]" aria-hidden="true" /><div><p className="font-semibold">Acceso administrativo</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los permisos dependen del rol `admin` y las políticas RLS de Supabase. El correo del primer administrador se configura en `site_settings`.</p></div></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><CircleDollarSign size={20} className="mt-0.5 text-[#f0b44d]" aria-hidden="true" /><div><p className="font-semibold">Financiamiento</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los plazos y la tasa por defecto viven en Supabase y se usan para el cálculo referencial público.</p></div></div></div></div>}
           </div>
         </section>

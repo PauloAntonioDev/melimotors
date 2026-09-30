@@ -132,3 +132,18 @@ abrirlos mediante un enlace temporal privado o eliminarlos del expediente.
 
 **Resultado:** los archivos quedan almacenados de forma privada y asociados a
 la venta con sus metadatos auditables.
+
+## UC-013 Gestionar propuesta
+
+**Actor:** administrador.
+
+**Precondicion:** existe una propuesta y el usuario esta autenticado con rol
+`admin`.
+
+**Flujo:** desde el listado compacto, el administrador abre WhatsApp, edita los
+datos de la propuesta, cambia su estado o solicita eliminarla. La eliminacion
+requiere confirmacion explicita.
+
+**Resultado:** los cambios se guardan sin alterar el identificador ni la fecha
+de ingreso. Si se confirma la eliminacion, la propuesta desaparece del listado
+y la operacion queda registrada en auditoria.

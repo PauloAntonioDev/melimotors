@@ -112,6 +112,8 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-014 | En cada rango comercial los valores son mayores o iguales a cero y el mínimo no puede superar al máximo. |
 | BR-PROP-015 | La vendibilidad se califica entre 0 y 5 puntos, exclusivamente en intervalos de 0,5. |
 | BR-PROP-016 | Al cambiar la región de una propuesta, la comuna previamente elegida se descarta y debe seleccionarse nuevamente. |
+| BR-PROP-017 | Un administrador puede editar los datos de una propuesta sin cambiar su identificador técnico, fecha de creación ni estado comercial. |
+| BR-PROP-018 | Solo un administrador puede eliminar una propuesta; la interfaz debe solicitar confirmación y la operación debe quedar auditada. |
 
 ## Acceso y auditoria
 
