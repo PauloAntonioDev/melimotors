@@ -113,11 +113,13 @@ vigente.
 **Flujo:** registra contacto, ciudad o ubicacion, modalidad, datos del vehiculo,
 precio esperado, resumen de la conversacion y notas internas. Opcionalmente
 asocia la propuesta a una campaña publicitaria mediante su nombre y codigo
-alfanumerico.
+alfanumerico. Puede evaluar rangos de compra para el negocio y venta de mercado,
+ademas de calificar la vendibilidad entre 0 y 5 puntos.
 
 **Resultado:** la propuesta queda guardada en estado `nueva`, identificada por
 el WhatsApp con codigo de pais y su campaña cuando corresponde; puede filtrarse,
-ordenarse y avanzar por su seguimiento comercial.
+ordenarse y avanzar por su seguimiento comercial. Los rangos y la vendibilidad
+quedan disponibles para analizar la conveniencia del negocio.
 
 ## UC-012 Gestionar documentos de venta
 

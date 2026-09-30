@@ -547,9 +547,15 @@ export default function AdminPage() {
 
   async function handleCreateProposal(proposal: VehicleProposalForm) {
     const numeric = (value: string) => Number(value || 0);
+    const optionalNumeric = (value: string) => value.trim() ? Number(value) : null;
     const digits = proposal.seller_phone.replace(/\D/g, "");
     const campaignCode = proposal.campaign_code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
     const proposalLocation = proposal.location.trim();
+    const businessPurchaseMin = optionalNumeric(proposal.business_purchase_price_min_clp);
+    const businessPurchaseMax = optionalNumeric(proposal.business_purchase_price_max_clp);
+    const marketSaleMin = optionalNumeric(proposal.market_sale_price_min_clp);
+    const marketSaleMax = optionalNumeric(proposal.market_sale_price_max_clp);
+    const sellabilityScore = Number(proposal.sellability_score);
     if (digits.length < 8) {
       setNotice("Ingresa un número WhatsApp válido con código de país.");
       return false;
@@ -560,6 +566,26 @@ export default function AdminPage() {
     }
     if (proposalLocation.length < 2) {
       setNotice("Ingresa la ciudad o ubicación de la propuesta.");
+      return false;
+    }
+    if ((businessPurchaseMin === null) !== (businessPurchaseMax === null)) {
+      setNotice("Completa ambos límites del rango de compra para el negocio.");
+      return false;
+    }
+    if (businessPurchaseMin !== null && businessPurchaseMax !== null && (businessPurchaseMin < 0 || businessPurchaseMin > businessPurchaseMax)) {
+      setNotice("El rango de compra para el negocio no es válido.");
+      return false;
+    }
+    if ((marketSaleMin === null) !== (marketSaleMax === null)) {
+      setNotice("Completa ambos límites del rango de venta de mercado.");
+      return false;
+    }
+    if (marketSaleMin !== null && marketSaleMax !== null && (marketSaleMin < 0 || marketSaleMin > marketSaleMax)) {
+      setNotice("El rango de venta de mercado no es válido.");
+      return false;
+    }
+    if (sellabilityScore < 0 || sellabilityScore > 5 || !Number.isInteger(sellabilityScore * 2)) {
+      setNotice("La vendibilidad debe estar entre 0 y 5, en intervalos de 0,5.");
       return false;
     }
     const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
@@ -576,6 +602,11 @@ export default function AdminPage() {
         vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
         vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
         expected_price_clp: numeric(proposal.expected_price_clp),
+        business_purchase_price_min_clp: businessPurchaseMin,
+        business_purchase_price_max_clp: businessPurchaseMax,
+        market_sale_price_min_clp: marketSaleMin,
+        market_sale_price_max_clp: marketSaleMax,
+        sellability_score: sellabilityScore,
         created_at: new Date().toISOString(),
       };
       setProposals((current) => [localProposal, ...current]);
@@ -597,6 +628,11 @@ export default function AdminPage() {
       vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
       vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
       expected_price_clp: numeric(proposal.expected_price_clp),
+      business_purchase_price_min_clp: businessPurchaseMin,
+      business_purchase_price_max_clp: businessPurchaseMax,
+      market_sale_price_min_clp: marketSaleMin,
+      market_sale_price_max_clp: marketSaleMax,
+      sellability_score: sellabilityScore,
       campaign_name: proposal.campaign_name.trim() || null,
       campaign_code: campaignCode || null,
       vehicle_description: proposal.vehicle_description || null,

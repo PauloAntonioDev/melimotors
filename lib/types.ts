@@ -123,6 +123,11 @@ export type VehicleProposal = {
   vehicle_year?: number | null;
   vehicle_mileage_km: number;
   expected_price_clp: number;
+  business_purchase_price_min_clp?: number | null;
+  business_purchase_price_max_clp?: number | null;
+  market_sale_price_min_clp?: number | null;
+  market_sale_price_max_clp?: number | null;
+  sellability_score: number;
   campaign_name?: string | null;
   campaign_code?: string | null;
   vehicle_description?: string | null;
@@ -145,6 +150,11 @@ export type VehicleProposalForm = {
   vehicle_year: string;
   vehicle_mileage_km: string;
   expected_price_clp: string;
+  business_purchase_price_min_clp: string;
+  business_purchase_price_max_clp: string;
+  market_sale_price_min_clp: string;
+  market_sale_price_max_clp: string;
+  sellability_score: string;
   campaign_name: string;
   campaign_code: string;
   vehicle_description: string;

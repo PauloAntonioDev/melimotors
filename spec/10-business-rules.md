@@ -108,6 +108,9 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-010 | Una propuesta puede asociarse opcionalmente a una campaña publicitaria; si registra nombre de campaña, debe registrar también su código. |
 | BR-PROP-011 | El código de campaña contiene solo letras y números, se normaliza en mayúsculas y permite agrupar propuestas de la misma campaña. |
 | BR-PROP-012 | Toda propuesta registra la ciudad o ubicación de origen en un texto de 2 a 120 caracteres. |
+| BR-PROP-013 | La evaluación comercial puede registrar un rango de compra para el negocio y un rango de venta de mercado; cada rango exige mínimo y máximo en CLP sin decimales. |
+| BR-PROP-014 | En cada rango comercial los valores son mayores o iguales a cero y el mínimo no puede superar al máximo. |
+| BR-PROP-015 | La vendibilidad se califica entre 0 y 5 puntos, exclusivamente en intervalos de 0,5. |
 
 ## Acceso y auditoria
 

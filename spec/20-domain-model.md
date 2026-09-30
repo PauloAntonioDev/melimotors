@@ -51,7 +51,9 @@ notas internas y datos de contacto.
 
 Representa una propuesta recibida para compra directa o consignacion. Conserva
 el contacto, la ciudad o ubicacion, los datos del vehiculo y, opcionalmente, el
-nombre y codigo de la campaña publicitaria que originó la captacion.
+nombre y codigo de la campaña publicitaria que originó la captacion. Su
+evaluacion comercial puede guardar rangos de compra y venta, ademas de una
+calificacion de vendibilidad.
 
 ### SiteSetting
 

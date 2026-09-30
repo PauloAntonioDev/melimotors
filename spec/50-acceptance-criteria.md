@@ -53,6 +53,9 @@ prueba de integracion de la futura aplicacion.
 | AC-046 | Un archivo vacio, de formato no permitido o mayor a 15 MB es rechazado. |
 | AC-047 | El administrador puede eliminar un documento de una venta sin eliminar el registro de la venta. |
 | AC-048 | Una propuesta nueva requiere ciudad o ubicación y la muestra en el listado administrativo. |
+| AC-049 | Un rango comercial incompleto, negativo o con mínimo superior al máximo es rechazado. |
+| AC-050 | La vendibilidad acepta desde 0 hasta 5 puntos en incrementos de 0,5 y rechaza otros valores. |
+| AC-051 | El listado de propuestas muestra los rangos de compra, venta de mercado y la vendibilidad registrada. |
 
 ## Definition of Done de esta fase
 

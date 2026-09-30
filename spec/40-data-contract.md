@@ -116,6 +116,11 @@ es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 | vehicle_year | smallint | no | Entre 1900 y 2100 |
 | vehicle_mileage_km | integer | si | Mayor o igual a cero |
 | expected_price_clp | bigint | si | Mayor o igual a cero |
+| business_purchase_price_min_clp | bigint | no | Mínimo del rango de compra para el negocio |
+| business_purchase_price_max_clp | bigint | no | Máximo del rango de compra, mayor o igual al mínimo |
+| market_sale_price_min_clp | bigint | no | Mínimo del rango de venta de mercado |
+| market_sale_price_max_clp | bigint | no | Máximo del rango de venta, mayor o igual al mínimo |
+| sellability_score | numeric(2,1) | si | Entre 0 y 5, en intervalos de 0,5 |
 | campaign_name | text | no | Nombre de la campaña publicitaria asociada |
 | campaign_code | text | no | Código alfanumérico normalizado en mayúsculas |
 | vehicle_description | text | no | Datos del vehiculo |
