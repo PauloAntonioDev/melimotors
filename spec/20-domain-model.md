@@ -32,7 +32,9 @@ vehiculo.
 ### VehicleSale
 
 Representa el cierre de una venta. Es uno a uno con Vehicle y exige precio
-final positivo y fecha de venta.
+final positivo y fecha de venta. Conserva los datos opcionales del comprador y
+una fotografia financiera de la comision, el monto del cliente y la ganancia
+real de Melimotors calculados al momento del cierre.
 
 ### Lead
 

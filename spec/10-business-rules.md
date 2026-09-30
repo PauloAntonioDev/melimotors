@@ -44,12 +44,16 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 
 | ID | Regla |
 | --- | --- |
-| BR-SALE-001 | Un vehiculo `disponible` puede pasar a `reservado` o `vendido`. |
+| BR-SALE-001 | Un vehiculo `disponible` puede pasar a `reservado`; un `borrador`, `disponible` o `reservado` puede venderse mediante un registro de venta. |
 | BR-SALE-002 | Un vehiculo `reservado` puede volver a `disponible` o pasar a `vendido`. |
 | BR-SALE-003 | Un vehiculo `vendido` requiere fecha de venta y precio final positivo. |
 | BR-SALE-004 | El precio final puede diferir del precio publicado, pero nunca ser negativo. |
 | BR-SALE-005 | Los datos internos del comprador son opcionales. |
 | BR-SALE-006 | Un vehiculo vendido no aparece en el catalogo activo. |
+| BR-SALE-007 | Registrar una venta cambia el vehiculo a `vendido` y conserva precio final, fecha, comprador opcional y notas. |
+| BR-SALE-008 | La ganancia real se calcula con el precio final: en compra directa es precio final menos costos; en consignacion es comision final menos costos. |
+| BR-SALE-009 | Una venta directa desde borrador no exige imagen, porque el vehiculo puede venderse sin publicacion previa. |
+| BR-SALE-010 | La fecha de venta no puede ser futura. |
 
 ## Imagenes
 

@@ -68,7 +68,12 @@ historia no se pierda aunque el vehiculo vuelva a estar disponible.
 ## vehicle_sales
 
 Una venta por vehiculo. `final_sale_price_clp` debe ser positivo y `sold_at` es
-obligatorio.
+obligatorio y no puede estar en el futuro. Conserva comprador y notas opcionales,
+ademas de `commission_amount_clp`, `client_proceeds_clp` y
+`dealer_profit_clp` calculados al momento de la venta.
+
+La funcion administrativa `register_vehicle_sale` guarda o actualiza la venta y
+cambia el vehiculo a `vendido` dentro de una unica transaccion.
 
 ## leads
 

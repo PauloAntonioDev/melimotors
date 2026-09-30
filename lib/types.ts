@@ -28,7 +28,31 @@ export type Vehicle = {
   gross_margin_clp?: number;
   margin_pct?: number;
   commission_amount_clp?: number;
+  commission_pct?: number;
   client_estimated_proceeds_clp?: number;
+};
+
+export type VehicleSale = {
+  vehicle_id: string;
+  sold_at: string;
+  final_sale_price_clp: number;
+  buyer_name?: string | null;
+  buyer_phone?: string | null;
+  notes?: string | null;
+  commission_amount_clp: number;
+  client_proceeds_clp?: number | null;
+  dealer_profit_clp: number;
+  created_at: string;
+  updated_at?: string;
+};
+
+export type VehicleSaleForm = {
+  vehicle_id: string;
+  sold_at: string;
+  final_sale_price_clp: string;
+  buyer_name: string;
+  buyer_phone: string;
+  notes: string;
 };
 
 export type LeadStatus =

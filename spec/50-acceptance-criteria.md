@@ -43,6 +43,11 @@ prueba de integracion de la futura aplicacion.
 | AC-036 | Los dias en stock corresponden a la diferencia entre la fecha actual y la fecha de ingreso. |
 | AC-037 | Una propuesta puede guardarse sin campaña; si registra nombre de campaña, requiere su código. |
 | AC-038 | Un código de campaña se guarda en mayúsculas y rechaza caracteres que no sean letras o números. |
+| AC-039 | Registrar una venta guarda precio final y fecha, y cambia el vehiculo a `vendido`. |
+| AC-040 | Una venta puede registrarse desde borrador sin exigir imagen de publicacion. |
+| AC-041 | La venta conserva la ganancia real calculada desde el precio final, costos y comision vigente. |
+| AC-042 | Una fecha de venta futura es rechazada. |
+| AC-043 | El registro de venta y el cambio del vehiculo a `vendido` se completan juntos o se revierten juntos. |
 
 ## Definition of Done de esta fase
 

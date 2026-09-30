@@ -27,8 +27,9 @@ import {
 } from "lucide-react";
 import { demoLeads, demoVehicles, vehicleImage } from "@/lib/demo-data";
 import AdminProposals from "@/components/admin-proposals";
+import AdminSales from "@/components/admin-sales";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
-import type { Lead, LeadStatus, ProposalStatus, Vehicle, VehicleForm, VehicleProposal, VehicleProposalForm, VehicleStatus } from "@/lib/types";
+import type { Lead, LeadStatus, ProposalStatus, Vehicle, VehicleForm, VehicleProposal, VehicleProposalForm, VehicleSale, VehicleSaleForm, VehicleStatus } from "@/lib/types";
 
 const chileToday = () =>
   new Intl.DateTimeFormat("en-CA", {
@@ -120,7 +121,6 @@ function StatusBadge({ status }: { status: VehicleStatus }) {
   const style = status === "disponible" ? "bg-[#e7f4f1] text-[#0b8a9e]" : status === "reservado" ? "bg-[#fff4d8] text-[#f0b44d]" : status === "vendido" ? "bg-[#eee9e3] text-[#6e655a]" : "bg-[#eaf4ff] text-[#5c7082]";
   return <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.09em] ${style}`}>{statusLabel[status]}</span>;
 }
-
 export default function AdminPage() {
   const localDemoMode = !isSupabaseConfigured && process.env.NODE_ENV !== "production";
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -130,9 +130,11 @@ export default function AdminPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(isSupabaseConfigured ? [] : demoVehicles);
   const [leads, setLeads] = useState<Lead[]>(isSupabaseConfigured ? [] : demoLeads);
   const [proposals, setProposals] = useState<VehicleProposal[]>([]);
+  const [sales, setSales] = useState<VehicleSale[]>([]);
+  const [saleVehicleId, setSaleVehicleId] = useState<string | null>(null);
   const [form, setForm] = useState<VehicleForm>(emptyForm);
   const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [activeView, setActiveView] = useState<"overview" | "leads" | "proposals" | "settings">("overview");
+  const [activeView, setActiveView] = useState<"overview" | "leads" | "proposals" | "sales" | "settings">("overview");
   const [showCreate, setShowCreate] = useState(false);
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [saving, setSaving] = useState(false);
@@ -153,10 +155,11 @@ export default function AdminPage() {
   async function loadData() {
     if (!supabase) return;
     setLoading(true);
-    const [vehicleResponse, leadResponse, proposalResponse] = await Promise.all([
+    const [vehicleResponse, leadResponse, proposalResponse, saleResponse] = await Promise.all([
       supabase.from("vehicles").select("*, vehicle_costs(*)").order("created_at", { ascending: false }),
       supabase.from("leads").select("*").order("created_at", { ascending: false }),
       supabase.from("vehicle_proposals").select("*").order("created_at", { ascending: false }),
+      supabase.from("vehicle_sales").select("*").order("sold_at", { ascending: false }),
     ]);
     if (!vehicleResponse.error) {
       setVehicles((vehicleResponse.data ?? []).map((item) => {
@@ -166,11 +169,12 @@ export default function AdminPage() {
         const salePrice = Number(item.sale_price_clp);
         const dealerEarnings = item.acquisition_type === "consignacion" ? commissionAmount - operatingCostTotal : salePrice - operatingCostTotal;
         const clientProceeds = item.acquisition_type === "consignacion" ? salePrice - commissionAmount : undefined;
-        return { ...item, cost_total_clp: operatingCostTotal, commission_amount_clp: commissionAmount, client_estimated_proceeds_clp: clientProceeds, gross_margin_clp: dealerEarnings, margin_pct: salePrice ? (dealerEarnings / salePrice) * 100 : 0 } as Vehicle;
+        return { ...item, cost_total_clp: operatingCostTotal, commission_amount_clp: commissionAmount, commission_pct: Number(costs?.commission_pct ?? 0), client_estimated_proceeds_clp: clientProceeds, gross_margin_clp: dealerEarnings, margin_pct: salePrice ? (dealerEarnings / salePrice) * 100 : 0 } as Vehicle;
       }));
     }
     if (!leadResponse.error) setLeads((leadResponse.data ?? []) as Lead[]);
     if (!proposalResponse.error) setProposals((proposalResponse.data ?? []) as VehicleProposal[]);
+    if (!saleResponse.error) setSales((saleResponse.data ?? []) as VehicleSale[]);
     setLoading(false);
   }
 
@@ -310,6 +314,11 @@ export default function AdminPage() {
   }
 
   async function handleVehicleStatus(id: string, status: VehicleStatus) {
+    if (status === "vendido") {
+      setSaleVehicleId(id);
+      setActiveView("sales");
+      return;
+    }
     if (!supabase) {
       setVehicles((current) => current.map((item) => item.id === id ? { ...item, status } : item));
       setNotice("Estado actualizado en el modo demo.");
@@ -318,6 +327,65 @@ export default function AdminPage() {
     const { error } = await supabase.from("vehicles").update({ status }).eq("id", id);
     setNotice(error ? "La regla de negocio rechazó ese cambio. Revisa reserva, venta o imágenes." : "Estado actualizado.");
     await loadData();
+  }
+
+  async function handleSaveSale(saleForm: VehicleSaleForm) {
+    const vehicle = vehicles.find((item) => item.id === saleForm.vehicle_id);
+    const finalPrice = Number(saleForm.final_sale_price_clp || 0);
+    if (!vehicle || finalPrice <= 0) {
+      setNotice("Selecciona un vehículo e ingresa un precio final válido.");
+      return false;
+    }
+    if (!saleForm.sold_at || saleForm.sold_at > chileToday()) {
+      setNotice("La fecha de venta no puede ser futura.");
+      return false;
+    }
+
+    const commissionAmount = vehicle.acquisition_type === "consignacion"
+      ? Math.round((finalPrice * (vehicle.commission_pct ?? 0)) / 100)
+      : 0;
+    const dealerProfit = vehicle.acquisition_type === "consignacion"
+      ? commissionAmount - (vehicle.cost_total_clp ?? 0)
+      : finalPrice - (vehicle.cost_total_clp ?? 0);
+    const soldAt = new Date(`${saleForm.sold_at}T12:00:00-03:00`).toISOString();
+
+    if (!supabase) {
+      const localSale: VehicleSale = {
+        vehicle_id: vehicle.id,
+        sold_at: soldAt,
+        final_sale_price_clp: finalPrice,
+        buyer_name: saleForm.buyer_name || null,
+        buyer_phone: saleForm.buyer_phone || null,
+        notes: saleForm.notes || null,
+        commission_amount_clp: commissionAmount,
+        client_proceeds_clp: vehicle.acquisition_type === "consignacion" ? finalPrice - commissionAmount : null,
+        dealer_profit_clp: dealerProfit,
+        created_at: new Date().toISOString(),
+      };
+      setSales((current) => [localSale, ...current.filter((sale) => sale.vehicle_id !== vehicle.id)]);
+      setVehicles((current) => current.map((item) => item.id === vehicle.id ? { ...item, status: "vendido" } : item));
+      setSaleVehicleId(null);
+      setNotice("Venta guardada en el modo demo.");
+      return true;
+    }
+
+    const { error: saleError } = await supabase.rpc("register_vehicle_sale", {
+      p_vehicle_id: vehicle.id,
+      p_sold_at: soldAt,
+      p_final_sale_price_clp: finalPrice,
+      p_buyer_name: saleForm.buyer_name.trim() || null,
+      p_buyer_phone: saleForm.buyer_phone.trim() || null,
+      p_notes: saleForm.notes.trim() || null,
+    });
+    if (saleError) {
+      setNotice("No pudimos guardar la venta. Revisa los datos ingresados.");
+      return false;
+    }
+
+    setSaleVehicleId(null);
+    setNotice("Venta registrada correctamente.");
+    await loadData();
+    return true;
   }
 
   async function handleLeadStatus(id: string, status: LeadStatus) {
@@ -455,14 +523,14 @@ export default function AdminPage() {
           <Link href="/" className="flex items-center gap-3 px-2"><img src="/melimotors-logo.png" alt="Melimotors" className="h-10 w-[132px] object-contain object-left" /></Link>
           <p className="mt-14 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">Operación</p>
           <nav className="mt-3 space-y-1" aria-label="Panel de administración">
-            {[{ id: "overview", label: "Resumen e inventario", icon: LayoutDashboard }, { id: "leads", label: "Consultas", icon: MessageCircle }, { id: "proposals", label: "Propuestas", icon: ClipboardList }, { id: "settings", label: "Configuración", icon: Settings2 }].map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveView(id as typeof activeView)} className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold transition ${activeView === id ? "bg-white/12 text-white" : "text-white/60 hover:bg-white/6 hover:text-white"}`}><Icon size={17} aria-hidden="true" />{label}{(id === "leads" && newLeads > 0) && <span className="ml-auto rounded-full bg-[#176bff] px-2 py-0.5 text-[11px] text-white">{newLeads}</span>}</button>)}
+            {[{ id: "overview", label: "Resumen e inventario", icon: LayoutDashboard }, { id: "leads", label: "Consultas", icon: MessageCircle }, { id: "proposals", label: "Propuestas", icon: ClipboardList }, { id: "sales", label: "Ventas", icon: CircleDollarSign }, { id: "settings", label: "Configuración", icon: Settings2 }].map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveView(id as typeof activeView)} className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold transition ${activeView === id ? "bg-white/12 text-white" : "text-white/60 hover:bg-white/6 hover:text-white"}`}><Icon size={17} aria-hidden="true" />{label}{(id === "leads" && newLeads > 0) && <span className="ml-auto rounded-full bg-[#176bff] px-2 py-0.5 text-[11px] text-white">{newLeads}</span>}</button>)}
           </nav>
           <div className="mt-auto space-y-2 border-t border-white/10 pt-5"><Link href="/" className="flex items-center gap-3 rounded-[10px] px-3 py-3 text-sm font-semibold text-white/60 hover:bg-white/6 hover:text-white"><ExternalLink size={17} aria-hidden="true" /> Ver sitio público</Link>{isSupabaseConfigured && <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-[10px] px-3 py-3 text-left text-sm font-semibold text-white/60 hover:bg-white/6 hover:text-white"><LogOut size={17} aria-hidden="true" /> Cerrar sesión</button>}</div>
         </aside>
 
         <section className="min-w-0 flex-1">
           <header className="sticky top-0 z-10 flex h-[76px] items-center justify-between border-b border-[#d9e4ef] bg-[#f7f9fc]/95 px-5 backdrop-blur-md sm:px-8">
-            <div className="flex items-center gap-3"><button className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white lg:hidden" aria-label="Abrir menú"><Menu size={18} /></button><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Administración</p><h1 className="mt-1 text-xl font-semibold tracking-[-0.04em]">{activeView === "overview" ? "Resumen de operación" : activeView === "leads" ? "Consultas de clientes" : activeView === "proposals" ? "Propuestas de vehículos" : "Configuración"}</h1></div></div>
+            <div className="flex items-center gap-3"><button className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white lg:hidden" aria-label="Abrir menú"><Menu size={18} /></button><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Administración</p><h1 className="mt-1 text-xl font-semibold tracking-[-0.04em]">{activeView === "overview" ? "Resumen de operación" : activeView === "leads" ? "Consultas de clientes" : activeView === "proposals" ? "Propuestas de vehículos" : activeView === "sales" ? "Ventas realizadas" : "Configuración"}</h1></div></div>
             <div className="flex items-center gap-3"><span className="hidden items-center gap-2 text-xs text-[#6c7c8d] sm:flex"><span className={`h-2 w-2 rounded-full ${isSupabaseConfigured ? "bg-[#0b8a9e]" : "bg-[#f0b44d]"}`} /> {isSupabaseConfigured ? userEmail : "Modo demo"}</span><Link href="/" className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#d9e4ef] bg-white text-[#51687d]" aria-label="Ir al sitio público"><ExternalLink size={17} aria-hidden="true" /></Link></div>
           </header>
 
@@ -478,6 +546,7 @@ export default function AdminPage() {
 
             {activeView === "leads" && <div><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Seguimiento comercial</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Consultas recibidas</h2></div><span className="text-sm text-[#6c7c8d]">{leads.length} registros</span></div><div className="mt-6 space-y-3">{leads.length ? leads.map((lead) => <article key={lead.id} className="grid gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)] md:grid-cols-[1.1fr_1.2fr_0.85fr]"><div><div className="flex items-center gap-2"><span className={`h-2 w-2 rounded-full ${lead.status === "nueva" ? "bg-[#176bff]" : "bg-[#0b8a9e]"}`} /><p className="font-semibold text-[#16334f]">{lead.name}</p></div><p className="mt-2 text-sm text-[#5c7082]">{lead.phone}{lead.email ? ` · ${lead.email}` : ""}</p><p className="mt-2 text-xs text-[#8a9baa]">{new Date(lead.created_at).toLocaleDateString("es-CL")}</p></div><div className="text-sm leading-6 text-[#51687d]">{lead.message || "Sin mensaje adicional."}<a href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="mt-3 flex w-fit items-center gap-1.5 text-xs font-bold text-[#0b8a9e] hover:underline"><MessageCircle size={14} aria-hidden="true" /> Abrir WhatsApp</a></div><label className="relative block"><span className="sr-only">Cambiar estado de consulta</span><select value={lead.status} onChange={(event) => void handleLeadStatus(lead.id, event.target.value as LeadStatus)} className="h-10 w-full appearance-none rounded-[9px] border border-[#d9e4ef] bg-[#ffffff] px-3 pr-8 text-sm font-semibold text-[#51687d] outline-none focus:border-[#176bff]">{Object.entries(leadStatusLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7c8b9a]" aria-hidden="true" /></label></article>) : <div className="rounded-[16px] border border-dashed border-[#d9e4ef] bg-white p-12 text-center text-sm text-[#7c8b9a]">No hay consultas registradas.</div>}</div></div>}
 
+            {activeView === "sales" && <AdminSales key={saleVehicleId ?? "sales"} vehicles={vehicles} sales={sales} initialVehicleId={saleVehicleId} onCloseRequested={() => setSaleVehicleId(null)} onSave={handleSaveSale} />}
             {activeView === "proposals" && <AdminProposals proposals={proposals} onCreate={handleCreateProposal} onStatusChange={handleProposalStatus} />}
             {activeView === "settings" && <div className="max-w-[760px]"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Configuración</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Parámetros del negocio</h2><div className="mt-6 space-y-3"><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><Settings2 size={20} className="mt-0.5 text-[#176bff]" aria-hidden="true" /><div><p className="font-semibold">Umbral de margen</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">La especificación inicia con un umbral de 10%. La publicación se permite, pero el inventario queda marcado cuando el margen está bajo.</p></div><span className="ml-auto rounded-full bg-[#eaf4ff] px-3 py-1 text-xs font-bold text-[#51687d]">10%</span></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><ShieldCheck size={20} className="mt-0.5 text-[#0b8a9e]" aria-hidden="true" /><div><p className="font-semibold">Acceso administrativo</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los permisos dependen del rol `admin` y las políticas RLS de Supabase. El correo del primer administrador se configura en `site_settings`.</p></div></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><CircleDollarSign size={20} className="mt-0.5 text-[#f0b44d]" aria-hidden="true" /><div><p className="font-semibold">Financiamiento</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los plazos y la tasa por defecto viven en Supabase y se usan para el cálculo referencial público.</p></div></div></div></div>}
           </div>

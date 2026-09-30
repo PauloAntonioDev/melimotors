@@ -61,11 +61,14 @@ ganancia neta de Melimotors se calculan al precio publicado y al precio minimo.
 
 **Actor:** administrador.
 
-**Precondicion:** vehiculo `disponible` o `reservado`.
+**Precondicion:** vehiculo `borrador`, `disponible` o `reservado`.
 
-**Flujo:** registra fecha y precio final y cambia el estado a `vendido`.
+**Flujo:** registra fecha, precio final, comprador opcional y notas. El sistema
+calcula la comision, el monto del cliente cuando corresponde y la ganancia real,
+y luego cambia el estado a `vendido`.
 
-**Resultado:** el vehiculo sale del catalogo activo.
+**Resultado:** el vehiculo sale del catalogo activo y queda disponible en el
+historial de ventas con sus resultados financieros.
 
 ## UC-007 Registrar consulta publica
 
