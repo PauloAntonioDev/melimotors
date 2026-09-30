@@ -62,6 +62,7 @@ prueba de integracion de la futura aplicacion.
 | AC-055 | El administrador puede adjuntar o reemplazar una imagen JPG, PNG o WebP de hasta 5 MB y verla como miniatura en la propuesta. |
 | AC-056 | Un archivo no permitido o mayor a 5 MB es rechazado sin crear un archivo en el bucket de propuestas. |
 | AC-057 | Con ambos rangos completos, el listado muestra el margen potencial conservador y máximo calculado; si faltan datos indica que está pendiente. |
+| AC-058 | El resumen administrativo muestra la suma de la ganancia real de las ventas y un vehículo vendido usa su precio final y ganancia real en el inventario. |
 
 ## Definition of Done de esta fase
 

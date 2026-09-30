@@ -58,6 +58,7 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-SALE-012 | Los documentos de venta son privados y solo pueden ser consultados o gestionados por un administrador autenticado. |
 | BR-SALE-013 | Cada documento pertenece a una venta, se almacena en Supabase Storage y conserva sus metadatos en PostgreSQL. |
 | BR-SALE-014 | Un documento de venta debe ser PDF, imagen o Word y no puede superar 15 MB. |
+| BR-SALE-015 | La ganancia real acumulada es la suma de `dealer_profit_clp` de todas las ventas registradas y no incluye márgenes estimados de vehículos activos. |
 
 ## Imagenes
 
