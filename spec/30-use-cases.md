@@ -63,9 +63,9 @@ ganancia neta de Melimotors se calculan al precio publicado y al precio minimo.
 
 **Precondicion:** vehiculo `borrador`, `disponible` o `reservado`.
 
-**Flujo:** registra fecha, precio final, comprador opcional y notas. El sistema
-calcula la comision, el monto del cliente cuando corresponde y la ganancia real,
-y luego cambia el estado a `vendido`.
+**Flujo:** registra fecha, precio final, comprador opcional, notas y documentos
+opcionales. El sistema calcula la comision, el monto del cliente cuando
+corresponde y la ganancia real, y luego cambia el estado a `vendido`.
 
 **Resultado:** el vehiculo sale del catalogo activo y queda disponible en el
 historial de ventas con sus resultados financieros.
@@ -117,3 +117,15 @@ a una campaña publicitaria mediante su nombre y codigo alfanumerico.
 **Resultado:** la propuesta queda guardada en estado `nueva`, identificada por
 el WhatsApp con codigo de pais y su campaña cuando corresponde; puede filtrarse,
 ordenarse y avanzar por su seguimiento comercial.
+
+## UC-012 Gestionar documentos de venta
+
+**Actor:** administrador.
+
+**Precondicion:** existe una venta registrada.
+
+**Flujo:** clasifica y adjunta uno o mas documentos PDF, imagen o Word. Puede
+abrirlos mediante un enlace temporal privado o eliminarlos del expediente.
+
+**Resultado:** los archivos quedan almacenados de forma privada y asociados a
+la venta con sus metadatos auditables.

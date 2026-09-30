@@ -75,6 +75,23 @@ ademas de `commission_amount_clp`, `client_proceeds_clp` y
 La funcion administrativa `register_vehicle_sale` guarda o actualiza la venta y
 cambia el vehiculo a `vendido` dentro de una unica transaccion.
 
+## vehicle_sale_documents
+
+| Campo | Tipo | Requerido | Regla |
+| --- | --- | --- | --- |
+| id | uuid | si | Identificador tecnico |
+| vehicle_id | uuid | si | Venta propietaria del documento |
+| document_type | text | si | `nota_venta`, `autofact`, `contrato_compraventa` u `otro` |
+| file_name | text | si | Nombre original no vacio |
+| storage_path | text | si | Ruta unica en el bucket privado `sale-documents` |
+| mime_type | text | no | Tipo MIME informado durante la carga |
+| file_size_bytes | bigint | si | Entre 1 byte y 15 MB |
+| uploaded_by | uuid | no | Administrador que adjunto el documento |
+| created_at | timestamptz | si | Fecha de carga |
+
+El bucket `sale-documents` no es publico. La lectura, carga y eliminacion exigen
+autenticacion y rol `admin`; la descarga se realiza con enlaces temporales.
+
 ## leads
 
 `name` y `phone` son obligatorios. `vehicle_id` es obligatorio cuando `source`

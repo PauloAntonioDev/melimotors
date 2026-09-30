@@ -36,6 +36,12 @@ final positivo y fecha de venta. Conserva los datos opcionales del comprador y
 una fotografia financiera de la comision, el monto del cliente y la ganancia
 real de Melimotors calculados al momento del cierre.
 
+### VehicleSaleDocument
+
+Representa un antecedente privado asociado a una venta, como nota de venta,
+informe Autofact o contrato de compraventa. El archivo vive en Supabase Storage
+y PostgreSQL conserva su categoria, nombre, tipo MIME, tamano y ubicacion.
+
 ### Lead
 
 Representa una consulta publica. Puede asociarse a un vehiculo y tiene estado,
@@ -65,6 +71,7 @@ vehicles 1 --- N vehicle_images
 vehicles 1 ---- 1 vehicle_costs
 vehicles 1 --- N vehicle_reservations
 vehicles 1 ---- 1 vehicle_sales
+vehicle_sales 1 --- N vehicle_sale_documents
 vehicles 1 --- N leads
 vehicles 1 --- N vehicle_proposals (asociacion opcional)
 profiles 1 --- N audit_events

@@ -54,6 +54,10 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-SALE-008 | La ganancia real se calcula con el precio final: en compra directa es precio final menos costos; en consignacion es comision final menos costos. |
 | BR-SALE-009 | Una venta directa desde borrador no exige imagen, porque el vehiculo puede venderse sin publicacion previa. |
 | BR-SALE-010 | La fecha de venta no puede ser futura. |
+| BR-SALE-011 | Una venta puede conservar documentos opcionales clasificados como nota de venta, Autofact, contrato de compraventa u otro. |
+| BR-SALE-012 | Los documentos de venta son privados y solo pueden ser consultados o gestionados por un administrador autenticado. |
+| BR-SALE-013 | Cada documento pertenece a una venta, se almacena en Supabase Storage y conserva sus metadatos en PostgreSQL. |
+| BR-SALE-014 | Un documento de venta debe ser PDF, imagen o Word y no puede superar 15 MB. |
 
 ## Imagenes
 

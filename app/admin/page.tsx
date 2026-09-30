@@ -29,7 +29,20 @@ import { demoLeads, demoVehicles, vehicleImage } from "@/lib/demo-data";
 import AdminProposals from "@/components/admin-proposals";
 import AdminSales from "@/components/admin-sales";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
-import type { Lead, LeadStatus, ProposalStatus, Vehicle, VehicleForm, VehicleProposal, VehicleProposalForm, VehicleSale, VehicleSaleForm, VehicleStatus } from "@/lib/types";
+import type {
+  Lead,
+  LeadStatus,
+  PendingSaleDocument,
+  ProposalStatus,
+  Vehicle,
+  VehicleForm,
+  VehicleProposal,
+  VehicleProposalForm,
+  VehicleSale,
+  VehicleSaleDocument,
+  VehicleSaleForm,
+  VehicleStatus,
+} from "@/lib/types";
 
 const chileToday = () =>
   new Intl.DateTimeFormat("en-CA", {
@@ -108,6 +121,37 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+const safeDocumentFileName = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/(^-|-$)/g, "") || "documento";
+
+const saleDocumentMimeType = (file: File) => {
+  const supportedMimeTypes = new Set([
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ]);
+  if (supportedMimeTypes.has(file.type)) return file.type;
+
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  return {
+    pdf: "application/pdf",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  }[extension ?? ""] ?? "application/octet-stream";
+};
+
 function Metric({ label, value, detail, icon: Icon, tone = "neutral" }: { label: string; value: string; detail: string; icon: typeof BarChart3; tone?: "neutral" | "green" | "red" }) {
   return (
     <div className="rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)]">
@@ -131,6 +175,7 @@ export default function AdminPage() {
   const [leads, setLeads] = useState<Lead[]>(isSupabaseConfigured ? [] : demoLeads);
   const [proposals, setProposals] = useState<VehicleProposal[]>([]);
   const [sales, setSales] = useState<VehicleSale[]>([]);
+  const [saleDocuments, setSaleDocuments] = useState<VehicleSaleDocument[]>([]);
   const [saleVehicleId, setSaleVehicleId] = useState<string | null>(null);
   const [form, setForm] = useState<VehicleForm>(emptyForm);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -155,11 +200,12 @@ export default function AdminPage() {
   async function loadData() {
     if (!supabase) return;
     setLoading(true);
-    const [vehicleResponse, leadResponse, proposalResponse, saleResponse] = await Promise.all([
+    const [vehicleResponse, leadResponse, proposalResponse, saleResponse, saleDocumentResponse] = await Promise.all([
       supabase.from("vehicles").select("*, vehicle_costs(*)").order("created_at", { ascending: false }),
       supabase.from("leads").select("*").order("created_at", { ascending: false }),
       supabase.from("vehicle_proposals").select("*").order("created_at", { ascending: false }),
       supabase.from("vehicle_sales").select("*").order("sold_at", { ascending: false }),
+      supabase.from("vehicle_sale_documents").select("*").order("created_at", { ascending: false }),
     ]);
     if (!vehicleResponse.error) {
       setVehicles((vehicleResponse.data ?? []).map((item) => {
@@ -175,6 +221,7 @@ export default function AdminPage() {
     if (!leadResponse.error) setLeads((leadResponse.data ?? []) as Lead[]);
     if (!proposalResponse.error) setProposals((proposalResponse.data ?? []) as VehicleProposal[]);
     if (!saleResponse.error) setSales((saleResponse.data ?? []) as VehicleSale[]);
+    if (!saleDocumentResponse.error) setSaleDocuments((saleDocumentResponse.data ?? []) as VehicleSaleDocument[]);
     setLoading(false);
   }
 
@@ -329,7 +376,7 @@ export default function AdminPage() {
     await loadData();
   }
 
-  async function handleSaveSale(saleForm: VehicleSaleForm) {
+  async function handleSaveSale(saleForm: VehicleSaleForm, pendingDocuments: PendingSaleDocument[]) {
     const vehicle = vehicles.find((item) => item.id === saleForm.vehicle_id);
     const finalPrice = Number(saleForm.final_sale_price_clp || 0);
     if (!vehicle || finalPrice <= 0) {
@@ -363,6 +410,19 @@ export default function AdminPage() {
         created_at: new Date().toISOString(),
       };
       setSales((current) => [localSale, ...current.filter((sale) => sale.vehicle_id !== vehicle.id)]);
+      setSaleDocuments((current) => [
+        ...pendingDocuments.map((document) => ({
+          id: document.id,
+          vehicle_id: vehicle.id,
+          document_type: document.document_type,
+          file_name: document.file.name,
+          storage_path: URL.createObjectURL(document.file),
+          mime_type: saleDocumentMimeType(document.file),
+          file_size_bytes: document.file.size,
+          created_at: new Date().toISOString(),
+        })),
+        ...current,
+      ]);
       setVehicles((current) => current.map((item) => item.id === vehicle.id ? { ...item, status: "vendido" } : item));
       setSaleVehicleId(null);
       setNotice("Venta guardada en el modo demo.");
@@ -382,10 +442,98 @@ export default function AdminPage() {
       return false;
     }
 
+    let failedDocuments = 0;
+    for (const document of pendingDocuments) {
+      const storagePath = `${vehicle.id}/${crypto.randomUUID()}-${safeDocumentFileName(document.file.name)}`;
+      const mimeType = saleDocumentMimeType(document.file);
+      const { error: uploadError } = await supabase.storage
+        .from("sale-documents")
+        .upload(storagePath, document.file, { upsert: false, contentType: mimeType });
+
+      if (uploadError) {
+        failedDocuments += 1;
+        continue;
+      }
+
+      const { error: metadataError } = await supabase.from("vehicle_sale_documents").insert({
+        vehicle_id: vehicle.id,
+        document_type: document.document_type,
+        file_name: document.file.name,
+        storage_path: storagePath,
+        mime_type: mimeType,
+        file_size_bytes: document.file.size,
+      });
+
+      if (metadataError) {
+        failedDocuments += 1;
+        await supabase.storage.from("sale-documents").remove([storagePath]);
+      }
+    }
+
     setSaleVehicleId(null);
-    setNotice("Venta registrada correctamente.");
     await loadData();
+    setNotice(
+      failedDocuments
+        ? `Venta guardada, pero ${failedDocuments} ${failedDocuments === 1 ? "documento no pudo" : "documentos no pudieron"} adjuntarse.`
+        : pendingDocuments.length
+          ? "Venta y documentos guardados correctamente."
+          : "Venta registrada correctamente.",
+    );
     return true;
+  }
+
+  async function handleOpenSaleDocument(document: VehicleSaleDocument) {
+    if (!supabase) {
+      window.open(document.storage_path, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    const previewWindow = window.open("", "_blank");
+    if (previewWindow) previewWindow.opener = null;
+    const { data, error } = await supabase.storage
+      .from("sale-documents")
+      .createSignedUrl(document.storage_path, 60);
+    if (error || !data?.signedUrl) {
+      previewWindow?.close();
+      setNotice("No pudimos abrir el documento.");
+      return;
+    }
+    if (previewWindow) {
+      previewWindow.location.href = data.signedUrl;
+    } else {
+      window.location.assign(data.signedUrl);
+    }
+  }
+
+  async function handleDeleteSaleDocument(document: VehicleSaleDocument) {
+    if (!window.confirm(`¿Eliminar ${document.file_name} del expediente de la venta?`)) return;
+
+    if (!supabase) {
+      URL.revokeObjectURL(document.storage_path);
+      setSaleDocuments((current) => current.filter((item) => item.id !== document.id));
+      setNotice("Documento eliminado en el modo demo.");
+      return;
+    }
+
+    const { error: storageError } = await supabase.storage
+      .from("sale-documents")
+      .remove([document.storage_path]);
+    if (storageError) {
+      setNotice("No pudimos eliminar el archivo del almacenamiento.");
+      return;
+    }
+
+    const { error: metadataError } = await supabase
+      .from("vehicle_sale_documents")
+      .delete()
+      .eq("id", document.id);
+    if (metadataError) {
+      setNotice("El archivo se eliminó, pero no pudimos actualizar el expediente.");
+      return;
+    }
+
+    setSaleDocuments((current) => current.filter((item) => item.id !== document.id));
+    setNotice("Documento eliminado.");
   }
 
   async function handleLeadStatus(id: string, status: LeadStatus) {
@@ -546,7 +694,7 @@ export default function AdminPage() {
 
             {activeView === "leads" && <div><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Seguimiento comercial</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Consultas recibidas</h2></div><span className="text-sm text-[#6c7c8d]">{leads.length} registros</span></div><div className="mt-6 space-y-3">{leads.length ? leads.map((lead) => <article key={lead.id} className="grid gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)] md:grid-cols-[1.1fr_1.2fr_0.85fr]"><div><div className="flex items-center gap-2"><span className={`h-2 w-2 rounded-full ${lead.status === "nueva" ? "bg-[#176bff]" : "bg-[#0b8a9e]"}`} /><p className="font-semibold text-[#16334f]">{lead.name}</p></div><p className="mt-2 text-sm text-[#5c7082]">{lead.phone}{lead.email ? ` · ${lead.email}` : ""}</p><p className="mt-2 text-xs text-[#8a9baa]">{new Date(lead.created_at).toLocaleDateString("es-CL")}</p></div><div className="text-sm leading-6 text-[#51687d]">{lead.message || "Sin mensaje adicional."}<a href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="mt-3 flex w-fit items-center gap-1.5 text-xs font-bold text-[#0b8a9e] hover:underline"><MessageCircle size={14} aria-hidden="true" /> Abrir WhatsApp</a></div><label className="relative block"><span className="sr-only">Cambiar estado de consulta</span><select value={lead.status} onChange={(event) => void handleLeadStatus(lead.id, event.target.value as LeadStatus)} className="h-10 w-full appearance-none rounded-[9px] border border-[#d9e4ef] bg-[#ffffff] px-3 pr-8 text-sm font-semibold text-[#51687d] outline-none focus:border-[#176bff]">{Object.entries(leadStatusLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7c8b9a]" aria-hidden="true" /></label></article>) : <div className="rounded-[16px] border border-dashed border-[#d9e4ef] bg-white p-12 text-center text-sm text-[#7c8b9a]">No hay consultas registradas.</div>}</div></div>}
 
-            {activeView === "sales" && <AdminSales key={saleVehicleId ?? "sales"} vehicles={vehicles} sales={sales} initialVehicleId={saleVehicleId} onCloseRequested={() => setSaleVehicleId(null)} onSave={handleSaveSale} />}
+            {activeView === "sales" && <AdminSales key={saleVehicleId ?? "sales"} vehicles={vehicles} sales={sales} documents={saleDocuments} initialVehicleId={saleVehicleId} onCloseRequested={() => setSaleVehicleId(null)} onSave={handleSaveSale} onOpenDocument={handleOpenSaleDocument} onDeleteDocument={handleDeleteSaleDocument} />}
             {activeView === "proposals" && <AdminProposals proposals={proposals} onCreate={handleCreateProposal} onStatusChange={handleProposalStatus} />}
             {activeView === "settings" && <div className="max-w-[760px]"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#176bff]">Configuración</p><h2 className="mt-2 text-2xl font-semibold tracking-[-0.05em]">Parámetros del negocio</h2><div className="mt-6 space-y-3"><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><Settings2 size={20} className="mt-0.5 text-[#176bff]" aria-hidden="true" /><div><p className="font-semibold">Umbral de margen</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">La especificación inicia con un umbral de 10%. La publicación se permite, pero el inventario queda marcado cuando el margen está bajo.</p></div><span className="ml-auto rounded-full bg-[#eaf4ff] px-3 py-1 text-xs font-bold text-[#51687d]">10%</span></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><ShieldCheck size={20} className="mt-0.5 text-[#0b8a9e]" aria-hidden="true" /><div><p className="font-semibold">Acceso administrativo</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los permisos dependen del rol `admin` y las políticas RLS de Supabase. El correo del primer administrador se configura en `site_settings`.</p></div></div><div className="flex items-start gap-4 rounded-[16px] border border-[#d9e4ef] bg-white p-5"><CircleDollarSign size={20} className="mt-0.5 text-[#f0b44d]" aria-hidden="true" /><div><p className="font-semibold">Financiamiento</p><p className="mt-1 text-sm leading-6 text-[#5c7082]">Los plazos y la tasa por defecto viven en Supabase y se usan para el cálculo referencial público.</p></div></div></div></div>}
           </div>

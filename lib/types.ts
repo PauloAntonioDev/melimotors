@@ -55,6 +55,29 @@ export type VehicleSaleForm = {
   notes: string;
 };
 
+export type SaleDocumentType =
+  | "nota_venta"
+  | "autofact"
+  | "contrato_compraventa"
+  | "otro";
+
+export type VehicleSaleDocument = {
+  id: string;
+  vehicle_id: string;
+  document_type: SaleDocumentType;
+  file_name: string;
+  storage_path: string;
+  mime_type?: string | null;
+  file_size_bytes: number;
+  created_at: string;
+};
+
+export type PendingSaleDocument = {
+  id: string;
+  document_type: SaleDocumentType;
+  file: File;
+};
+
 export type LeadStatus =
   | "nueva"
   | "contactada"

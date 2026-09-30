@@ -48,6 +48,10 @@ prueba de integracion de la futura aplicacion.
 | AC-041 | La venta conserva la ganancia real calculada desde el precio final, costos y comision vigente. |
 | AC-042 | Una fecha de venta futura es rechazada. |
 | AC-043 | El registro de venta y el cambio del vehiculo a `vendido` se completan juntos o se revierten juntos. |
+| AC-044 | El administrador puede adjuntar a una venta un PDF, imagen o Word de hasta 15 MB y clasificarlo. |
+| AC-045 | Un documento de venta no tiene URL publica y solo un administrador autenticado puede abrirlo mediante un enlace temporal. |
+| AC-046 | Un archivo vacio, de formato no permitido o mayor a 15 MB es rechazado. |
+| AC-047 | El administrador puede eliminar un documento de una venta sin eliminar el registro de la venta. |
 
 ## Definition of Done de esta fase
 
