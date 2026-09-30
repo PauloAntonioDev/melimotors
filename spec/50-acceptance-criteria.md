@@ -59,6 +59,9 @@ prueba de integracion de la futura aplicacion.
 | AC-051 | El listado de propuestas muestra los rangos de compra, venta de mercado y la vendibilidad registrada. |
 | AC-053 | El administrador puede editar una propuesta desde el listado y los cambios conservan su identificador, fecha de ingreso y estado. |
 | AC-054 | El administrador puede eliminar una propuesta solo después de confirmarla y la eliminación genera un evento de auditoría. |
+| AC-055 | El administrador puede adjuntar o reemplazar una imagen JPG, PNG o WebP de hasta 5 MB y verla como miniatura en la propuesta. |
+| AC-056 | Un archivo no permitido o mayor a 5 MB es rechazado sin crear un archivo en el bucket de propuestas. |
+| AC-057 | Con ambos rangos completos, el listado muestra el margen potencial conservador y máximo calculado; si faltan datos indica que está pendiente. |
 
 ## Definition of Done de esta fase
 

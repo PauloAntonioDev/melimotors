@@ -153,6 +153,19 @@ const saleDocumentMimeType = (file: File) => {
   }[extension ?? ""] ?? "application/octet-stream";
 };
 
+const proposalImageMimeType = (file: File) => {
+  const supportedMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+  if (supportedMimeTypes.has(file.type)) return file.type;
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  return extension === "jpg" || extension === "jpeg"
+    ? "image/jpeg"
+    : extension === "png"
+      ? "image/png"
+      : extension === "webp"
+        ? "image/webp"
+        : null;
+};
+
 function Metric({ label, value, detail, icon: Icon, tone = "neutral" }: { label: string; value: string; detail: string; icon: typeof BarChart3; tone?: "neutral" | "green" | "red" }) {
   return (
     <div className="rounded-[16px] border border-[#d9e4ef] bg-white p-5 shadow-[0_10px_25px_rgba(31,35,31,0.04)]">
@@ -200,6 +213,7 @@ export default function AdminPage() {
 
   async function loadData() {
     if (!supabase) return;
+    const supabaseClient = supabase;
     setLoading(true);
     const [vehicleResponse, leadResponse, proposalResponse, saleResponse, saleDocumentResponse] = await Promise.all([
       supabase.from("vehicles").select("*, vehicle_costs(*)").order("created_at", { ascending: false }),
@@ -220,7 +234,19 @@ export default function AdminPage() {
       }));
     }
     if (!leadResponse.error) setLeads((leadResponse.data ?? []) as Lead[]);
-    if (!proposalResponse.error) setProposals((proposalResponse.data ?? []) as VehicleProposal[]);
+    if (!proposalResponse.error) {
+      const proposalItems = (proposalResponse.data ?? []) as VehicleProposal[];
+      const proposalsWithImages = await Promise.all(
+        proposalItems.map(async (proposal) => {
+          if (!proposal.image_storage_path) return proposal;
+          const { data } = await supabaseClient.storage
+            .from("proposal-images")
+            .createSignedUrl(proposal.image_storage_path, 3600);
+          return { ...proposal, image_url: data?.signedUrl ?? null };
+        }),
+      );
+      setProposals(proposalsWithImages);
+    }
     if (!saleResponse.error) setSales((saleResponse.data ?? []) as VehicleSale[]);
     if (!saleDocumentResponse.error) setSaleDocuments((saleDocumentResponse.data ?? []) as VehicleSaleDocument[]);
     setLoading(false);
@@ -546,18 +572,37 @@ export default function AdminPage() {
     await loadData();
   }
 
-  async function handleSaveProposal(proposal: VehicleProposalForm, proposalId?: string | null) {
+  async function handleSaveProposal(
+    proposal: VehicleProposalForm,
+    imageFile: File | null,
+    proposalId?: string | null,
+  ) {
     const numeric = (value: string) => Number(value || 0);
-    const optionalNumeric = (value: string) => value.trim() ? Number(value) : null;
+    const optionalNumeric = (value: string) =>
+      value.trim() ? Number(value) : null;
     const digits = proposal.seller_phone.replace(/\D/g, "");
-    const campaignCode = proposal.campaign_code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    const campaignCode = proposal.campaign_code
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .toUpperCase();
     const proposalRegion = proposal.region.trim();
     const proposalLocation = proposal.location.trim();
-    const businessPurchaseMin = optionalNumeric(proposal.business_purchase_price_min_clp);
-    const businessPurchaseMax = optionalNumeric(proposal.business_purchase_price_max_clp);
+    const businessPurchaseMin = optionalNumeric(
+      proposal.business_purchase_price_min_clp,
+    );
+    const businessPurchaseMax = optionalNumeric(
+      proposal.business_purchase_price_max_clp,
+    );
     const marketSaleMin = optionalNumeric(proposal.market_sale_price_min_clp);
     const marketSaleMax = optionalNumeric(proposal.market_sale_price_max_clp);
     const sellabilityScore = Number(proposal.sellability_score);
+    const imageMimeType = imageFile ? proposalImageMimeType(imageFile) : null;
+    if (
+      imageFile &&
+      (!imageMimeType || imageFile.size < 1 || imageFile.size > 5 * 1024 * 1024)
+    ) {
+      setNotice("La foto debe ser JPG, PNG o WebP y pesar como máximo 5 MB.");
+      return false;
+    }
     if (digits.length < 8) {
       setNotice("Ingresa un número WhatsApp válido con código de país.");
       return false;
@@ -574,7 +619,11 @@ export default function AdminPage() {
       setNotice("Completa ambos límites del rango de compra para el negocio.");
       return false;
     }
-    if (businessPurchaseMin !== null && businessPurchaseMax !== null && (businessPurchaseMin < 0 || businessPurchaseMin > businessPurchaseMax)) {
+    if (
+      businessPurchaseMin !== null &&
+      businessPurchaseMax !== null &&
+      (businessPurchaseMin < 0 || businessPurchaseMin > businessPurchaseMax)
+    ) {
       setNotice("El rango de compra para el negocio no es válido.");
       return false;
     }
@@ -582,15 +631,27 @@ export default function AdminPage() {
       setNotice("Completa ambos límites del rango de venta de mercado.");
       return false;
     }
-    if (marketSaleMin !== null && marketSaleMax !== null && (marketSaleMin < 0 || marketSaleMin > marketSaleMax)) {
+    if (
+      marketSaleMin !== null &&
+      marketSaleMax !== null &&
+      (marketSaleMin < 0 || marketSaleMin > marketSaleMax)
+    ) {
       setNotice("El rango de venta de mercado no es válido.");
       return false;
     }
-    if (sellabilityScore < 0 || sellabilityScore > 5 || !Number.isInteger(sellabilityScore * 2)) {
-      setNotice("La vendibilidad debe estar entre 0 y 5, en intervalos de 0,5.");
+    if (
+      sellabilityScore < 0 ||
+      sellabilityScore > 5 ||
+      !Number.isInteger(sellabilityScore * 2)
+    ) {
+      setNotice(
+        "La vendibilidad debe estar entre 0 y 5, en intervalos de 0,5.",
+      );
       return false;
     }
-    const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
+    const whatsappId = digits.startsWith("56")
+      ? `+${digits}`
+      : `+56${digits.replace(/^0/, "")}`;
     const payload = {
       source: proposal.source,
       acquisition_type: proposal.acquisition_type,
@@ -603,7 +664,9 @@ export default function AdminPage() {
       vehicle_plate: proposal.vehicle_plate.trim() || null,
       vehicle_brand: proposal.vehicle_brand.trim(),
       vehicle_model: proposal.vehicle_model.trim(),
-      vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
+      vehicle_year: proposal.vehicle_year
+        ? numeric(proposal.vehicle_year)
+        : null,
       vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
       expected_price_clp: numeric(proposal.expected_price_clp),
       business_purchase_price_min_clp: businessPurchaseMin,
@@ -619,49 +682,133 @@ export default function AdminPage() {
     };
 
     if (!supabase) {
+      const localImageUrl = imageFile
+        ? URL.createObjectURL(imageFile)
+        : undefined;
       if (proposalId) {
-        setProposals((current) => current.map((item) => item.id === proposalId ? { ...item, ...payload, updated_at: new Date().toISOString() } : item));
+        setProposals((current) =>
+          current.map((item) =>
+            item.id === proposalId
+              ? {
+                  ...item,
+                  ...payload,
+                  image_url: localImageUrl ?? item.image_url,
+                  updated_at: new Date().toISOString(),
+                }
+              : item,
+          ),
+        );
       } else {
         const localProposal: VehicleProposal = {
           id: `proposal-${Date.now()}`,
           ...payload,
+          image_url: localImageUrl,
           status: "nueva",
           vehicle_id: null,
           created_at: new Date().toISOString(),
         };
         setProposals((current) => [localProposal, ...current]);
       }
-      setNotice(proposalId ? "Propuesta actualizada en el modo demo." : "Propuesta guardada en el modo demo.");
+      setNotice(
+        proposalId
+          ? "Propuesta actualizada en el modo demo."
+          : "Propuesta guardada en el modo demo.",
+      );
       return true;
     }
 
-    const { error } = proposalId
-      ? await supabase.from("vehicle_proposals").update(payload).eq("id", proposalId)
-      : await supabase.from("vehicle_proposals").insert(payload);
-    if (error) {
-      setNotice(error.message || `No pudimos ${proposalId ? "actualizar" : "guardar"} la propuesta.`);
-      return false;
+    let savedProposalId = proposalId ?? null;
+    if (proposalId) {
+      const { error } = await supabase
+        .from("vehicle_proposals")
+        .update(payload)
+        .eq("id", proposalId);
+      if (error) {
+        setNotice(error.message || "No pudimos actualizar la propuesta.");
+        return false;
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("vehicle_proposals")
+        .insert(payload)
+        .select("id")
+        .single();
+      if (error || !data) {
+        setNotice(error?.message || "No pudimos guardar la propuesta.");
+        return false;
+      }
+      savedProposalId = data.id as string;
     }
-    setNotice(proposalId ? "Propuesta actualizada correctamente." : "Propuesta guardada correctamente.");
+
+    let photoNotice = "";
+    if (imageFile && savedProposalId && imageMimeType) {
+      const currentProposal = proposals.find((item) => item.id === proposalId);
+      const storagePath = `${savedProposalId}/${crypto.randomUUID()}-${safeDocumentFileName(imageFile.name)}`;
+      const { error: uploadError } = await supabase.storage
+        .from("proposal-images")
+        .upload(storagePath, imageFile, {
+          upsert: false,
+          contentType: imageMimeType,
+        });
+
+      if (uploadError) {
+        photoNotice = " La propuesta se guardó, pero no pudimos subir la foto.";
+      } else {
+        const { error: imageUpdateError } = await supabase
+          .from("vehicle_proposals")
+          .update({ image_storage_path: storagePath })
+          .eq("id", savedProposalId);
+        if (imageUpdateError) {
+          await supabase.storage.from("proposal-images").remove([storagePath]);
+          photoNotice =
+            " La propuesta se guardó, pero no pudimos asociar la foto.";
+        } else if (currentProposal?.image_storage_path) {
+          await supabase.storage
+            .from("proposal-images")
+            .remove([currentProposal.image_storage_path]);
+        }
+      }
+    }
+
+    setNotice(
+      `${proposalId ? "Propuesta actualizada correctamente." : "Propuesta guardada correctamente."}${photoNotice}`,
+    );
     await loadData();
     return true;
   }
 
   async function handleDeleteProposal(proposal: VehicleProposal) {
-    if (!window.confirm(`¿Eliminar la propuesta de ${proposal.vehicle_brand} ${proposal.vehicle_model}?`)) return;
+    if (
+      !window.confirm(
+        `¿Eliminar la propuesta de ${proposal.vehicle_brand} ${proposal.vehicle_model}?`,
+      )
+    )
+      return;
 
     if (!supabase) {
-      setProposals((current) => current.filter((item) => item.id !== proposal.id));
+      setProposals((current) =>
+        current.filter((item) => item.id !== proposal.id),
+      );
       setNotice("Propuesta eliminada en el modo demo.");
       return;
     }
 
-    const { error } = await supabase.from("vehicle_proposals").delete().eq("id", proposal.id);
+    const { error } = await supabase
+      .from("vehicle_proposals")
+      .delete()
+      .eq("id", proposal.id);
     if (error) {
       setNotice("No pudimos eliminar la propuesta.");
       return;
     }
-    setProposals((current) => current.filter((item) => item.id !== proposal.id));
+    if (proposal.image_storage_path) {
+      await supabase.storage
+        .from("proposal-images")
+        .remove([proposal.image_storage_path]);
+    }
+    setProposals((current) =>
+      current.filter((item) => item.id !== proposal.id),
+    );
     setNotice("Propuesta eliminada.");
   }
 

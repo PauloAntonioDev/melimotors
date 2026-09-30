@@ -53,7 +53,9 @@ Representa una propuesta recibida para compra directa o consignacion. Conserva
 el contacto, la region y comuna, los datos del vehiculo y, opcionalmente, el
 nombre y codigo de la campaña publicitaria que originó la captacion. Su
 evaluacion comercial puede guardar rangos de compra y venta, ademas de una
-calificacion de vendibilidad.
+calificacion de vendibilidad. Puede incluir una imagen privada para identificar
+rapidamente el vehiculo; el margen potencial se deriva de los rangos y no se
+persiste como un valor independiente.
 
 ### SiteSetting
 

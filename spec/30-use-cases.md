@@ -141,9 +141,11 @@ la venta con sus metadatos auditables.
 `admin`.
 
 **Flujo:** desde el listado compacto, el administrador abre WhatsApp, edita los
-datos de la propuesta, cambia su estado o solicita eliminarla. La eliminacion
-requiere confirmacion explicita.
+datos de la propuesta, adjunta o reemplaza su imagen, cambia su estado o
+solicita eliminarla. La evaluacion muestra automaticamente el rango de margen
+potencial. La eliminacion requiere confirmacion explicita.
 
 **Resultado:** los cambios se guardan sin alterar el identificador ni la fecha
-de ingreso. Si se confirma la eliminacion, la propuesta desaparece del listado
-y la operacion queda registrada en auditoria.
+de ingreso. La miniatura queda disponible solo para administradores. Si se
+confirma la eliminacion, la propuesta y su imagen desaparecen, y la operacion
+queda registrada en auditoria.

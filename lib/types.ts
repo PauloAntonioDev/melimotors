@@ -134,6 +134,8 @@ export type VehicleProposal = {
   vehicle_description?: string | null;
   conversation_summary?: string | null;
   internal_notes?: string | null;
+  image_storage_path?: string | null;
+  image_url?: string | null;
   created_at: string;
   updated_at?: string;
 };

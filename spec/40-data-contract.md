@@ -127,7 +127,13 @@ es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 | vehicle_description | text | no | Datos del vehiculo |
 | conversation_summary | text | no | Resumen del contacto por WhatsApp |
 | internal_notes | text | no | Solo administracion |
+| image_storage_path | text | no | Ruta de la imagen en el bucket privado `proposal-images` |
 | created_at | timestamptz | si | Fecha de ingreso |
+
+El bucket `proposal-images` es privado, acepta JPG, PNG o WebP de hasta 5 MB y
+solo puede ser consultado o gestionado por administradores. La interfaz obtiene
+un enlace temporal para mostrar la miniatura. `potential_margin_min_clp` y
+`potential_margin_max_clp` son valores derivados, no columnas persistidas.
 
 ## site_settings
 

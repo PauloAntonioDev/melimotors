@@ -16,6 +16,7 @@
 - `public.vehicle_margin_summary`: vista administrativa de costos y margenes.
 - `public.calculate_financing_payment(...)`: cuota referencial reutilizable.
 - `storage.vehicle-images`: bucket publico de lectura y escritura restringida.
+- `storage.proposal-images`: bucket privado para fotos de propuestas, restringido a administradores.
 
 ## Seguridad
 

@@ -114,6 +114,9 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-016 | Al cambiar la región de una propuesta, la comuna previamente elegida se descarta y debe seleccionarse nuevamente. |
 | BR-PROP-017 | Un administrador puede editar los datos de una propuesta sin cambiar su identificador técnico, fecha de creación ni estado comercial. |
 | BR-PROP-018 | Solo un administrador puede eliminar una propuesta; la interfaz debe solicitar confirmación y la operación debe quedar auditada. |
+| BR-PROP-019 | Una propuesta puede conservar una imagen principal privada en formato JPG, PNG o WebP de hasta 5 MB. |
+| BR-PROP-020 | Si existen ambos rangos comerciales, el margen potencial conservador es `venta mínima - compra máxima` y el margen potencial máximo es `venta máxima - compra mínima`. |
+| BR-PROP-021 | Reemplazar o eliminar una propuesta debe retirar del almacenamiento la imagen anterior cuando corresponda. |
 
 ## Acceso y auditoria
 
