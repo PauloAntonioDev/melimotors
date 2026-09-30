@@ -107,6 +107,7 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-009 | Cada propuesta conserva un identificador WhatsApp normalizado con código de país, por ejemplo `+56912345678`. El UUID técnico se mantiene para auditoría y relaciones. |
 | BR-PROP-010 | Una propuesta puede asociarse opcionalmente a una campaña publicitaria; si registra nombre de campaña, debe registrar también su código. |
 | BR-PROP-011 | El código de campaña contiene solo letras y números, se normaliza en mayúsculas y permite agrupar propuestas de la misma campaña. |
+| BR-PROP-012 | Toda propuesta registra la ciudad o ubicación de origen en un texto de 2 a 120 caracteres. |
 
 ## Acceso y auditoria
 

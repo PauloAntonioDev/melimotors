@@ -115,6 +115,7 @@ export type VehicleProposal = {
   seller_name: string;
   seller_phone: string;
   seller_email?: string | null;
+  location: string;
   vehicle_id?: string | null;
   vehicle_plate?: string | null;
   vehicle_brand: string;
@@ -137,6 +138,7 @@ export type VehicleProposalForm = {
   seller_name: string;
   seller_phone: string;
   seller_email: string;
+  location: string;
   vehicle_plate: string;
   vehicle_brand: string;
   vehicle_model: string;

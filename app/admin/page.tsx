@@ -549,12 +549,17 @@ export default function AdminPage() {
     const numeric = (value: string) => Number(value || 0);
     const digits = proposal.seller_phone.replace(/\D/g, "");
     const campaignCode = proposal.campaign_code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    const proposalLocation = proposal.location.trim();
     if (digits.length < 8) {
       setNotice("Ingresa un número WhatsApp válido con código de país.");
       return false;
     }
     if (proposal.campaign_name.trim() && !campaignCode) {
       setNotice("Ingresa el código alfanumérico de la campaña.");
+      return false;
+    }
+    if (proposalLocation.length < 2) {
+      setNotice("Ingresa la ciudad o ubicación de la propuesta.");
       return false;
     }
     const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
@@ -564,6 +569,7 @@ export default function AdminPage() {
         ...proposal,
         campaign_name: proposal.campaign_name.trim() || null,
         campaign_code: campaignCode || null,
+        location: proposalLocation,
         whatsapp_id: whatsappId,
         status: "nueva",
         vehicle_id: null,
@@ -584,6 +590,7 @@ export default function AdminPage() {
       seller_name: proposal.seller_name,
       seller_phone: proposal.seller_phone,
       seller_email: proposal.seller_email || null,
+      location: proposalLocation,
       vehicle_plate: proposal.vehicle_plate || null,
       vehicle_brand: proposal.vehicle_brand,
       vehicle_model: proposal.vehicle_model,

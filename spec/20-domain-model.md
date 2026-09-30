@@ -50,8 +50,8 @@ notas internas y datos de contacto.
 ### VehicleProposal
 
 Representa una propuesta recibida para compra directa o consignacion. Conserva
-el contacto, los datos del vehiculo y, opcionalmente, el nombre y codigo de la
-campaña publicitaria que originó la captacion.
+el contacto, la ciudad o ubicacion, los datos del vehiculo y, opcionalmente, el
+nombre y codigo de la campaña publicitaria que originó la captacion.
 
 ### SiteSetting
 

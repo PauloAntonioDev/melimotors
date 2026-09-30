@@ -110,9 +110,10 @@ vigente.
 
 **Precondicion:** usuario autenticado con rol `admin`.
 
-**Flujo:** registra contacto, modalidad, datos del vehiculo, precio esperado,
-resumen de la conversacion y notas internas. Opcionalmente asocia la propuesta
-a una campaña publicitaria mediante su nombre y codigo alfanumerico.
+**Flujo:** registra contacto, ciudad o ubicacion, modalidad, datos del vehiculo,
+precio esperado, resumen de la conversacion y notas internas. Opcionalmente
+asocia la propuesta a una campaña publicitaria mediante su nombre y codigo
+alfanumerico.
 
 **Resultado:** la propuesta queda guardada en estado `nueva`, identificada por
 el WhatsApp con codigo de pais y su campaña cuando corresponde; puede filtrarse,

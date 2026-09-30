@@ -52,6 +52,7 @@ prueba de integracion de la futura aplicacion.
 | AC-045 | Un documento de venta no tiene URL publica y solo un administrador autenticado puede abrirlo mediante un enlace temporal. |
 | AC-046 | Un archivo vacio, de formato no permitido o mayor a 15 MB es rechazado. |
 | AC-047 | El administrador puede eliminar un documento de una venta sin eliminar el registro de la venta. |
+| AC-048 | Una propuesta nueva requiere ciudad o ubicación y la muestra en el listado administrativo. |
 
 ## Definition of Done de esta fase
 
