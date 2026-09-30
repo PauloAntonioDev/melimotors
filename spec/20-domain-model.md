@@ -39,6 +39,12 @@ final positivo y fecha de venta.
 Representa una consulta publica. Puede asociarse a un vehiculo y tiene estado,
 notas internas y datos de contacto.
 
+### VehicleProposal
+
+Representa una propuesta recibida para compra directa o consignacion. Conserva
+el contacto, los datos del vehiculo y, opcionalmente, el nombre y codigo de la
+campaña publicitaria que originó la captacion.
+
 ### SiteSetting
 
 Contiene valores configurables del negocio, como correo administrador, umbral
@@ -58,6 +64,7 @@ vehicles 1 ---- 1 vehicle_costs
 vehicles 1 --- N vehicle_reservations
 vehicles 1 ---- 1 vehicle_sales
 vehicles 1 --- N leads
+vehicles 1 --- N vehicle_proposals (asociacion opcional)
 profiles 1 --- N audit_events
 profiles 1 ---- N site_settings (updated_by)
 ```

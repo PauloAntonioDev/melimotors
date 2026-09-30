@@ -332,8 +332,13 @@ export default function AdminPage() {
   async function handleCreateProposal(proposal: VehicleProposalForm) {
     const numeric = (value: string) => Number(value || 0);
     const digits = proposal.seller_phone.replace(/\D/g, "");
+    const campaignCode = proposal.campaign_code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
     if (digits.length < 8) {
       setNotice("Ingresa un número WhatsApp válido con código de país.");
+      return false;
+    }
+    if (proposal.campaign_name.trim() && !campaignCode) {
+      setNotice("Ingresa el código alfanumérico de la campaña.");
       return false;
     }
     const whatsappId = digits.startsWith("56") ? `+${digits}` : `+56${digits.replace(/^0/, "")}`;
@@ -341,6 +346,8 @@ export default function AdminPage() {
       const localProposal: VehicleProposal = {
         id: `proposal-${Date.now()}`,
         ...proposal,
+        campaign_name: proposal.campaign_name.trim() || null,
+        campaign_code: campaignCode || null,
         whatsapp_id: whatsappId,
         status: "nueva",
         vehicle_id: null,
@@ -367,6 +374,8 @@ export default function AdminPage() {
       vehicle_year: proposal.vehicle_year ? numeric(proposal.vehicle_year) : null,
       vehicle_mileage_km: numeric(proposal.vehicle_mileage_km),
       expected_price_clp: numeric(proposal.expected_price_clp),
+      campaign_name: proposal.campaign_name.trim() || null,
+      campaign_code: campaignCode || null,
       vehicle_description: proposal.vehicle_description || null,
       conversation_summary: proposal.conversation_summary || null,
       internal_notes: proposal.internal_notes || null,

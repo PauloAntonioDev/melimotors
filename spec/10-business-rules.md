@@ -97,6 +97,8 @@ relacionados se encuentran en `50-acceptance-criteria.md`.
 | BR-PROP-007 | El origen por defecto de una propuesta es `whatsapp` y puede clasificarse como presencial, referido u otro. |
 | BR-PROP-008 | Las propuestas se ordenan por fecha de creación descendente y pueden filtrarse por estado. |
 | BR-PROP-009 | Cada propuesta conserva un identificador WhatsApp normalizado con código de país, por ejemplo `+56912345678`. El UUID técnico se mantiene para auditoría y relaciones. |
+| BR-PROP-010 | Una propuesta puede asociarse opcionalmente a una campaña publicitaria; si registra nombre de campaña, debe registrar también su código. |
+| BR-PROP-011 | El código de campaña contiene solo letras y números, se normaliza en mayúsculas y permite agrupar propuestas de la misma campaña. |
 
 ## Acceso y auditoria
 

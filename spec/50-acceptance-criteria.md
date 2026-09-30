@@ -41,6 +41,8 @@ prueba de integracion de la futura aplicacion.
 | AC-034 | Una propuesta guarda el WhatsApp normalizado con código de país como identificador visible. |
 | AC-035 | Un vehiculo guarda su fecha de ingreso al stock y rechaza una fecha futura. |
 | AC-036 | Los dias en stock corresponden a la diferencia entre la fecha actual y la fecha de ingreso. |
+| AC-037 | Una propuesta puede guardarse sin campaña; si registra nombre de campaña, requiere su código. |
+| AC-038 | Un código de campaña se guarda en mayúsculas y rechaza caracteres que no sean letras o números. |
 
 ## Definition of Done de esta fase
 

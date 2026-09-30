@@ -75,6 +75,8 @@ export type VehicleProposal = {
   vehicle_year?: number | null;
   vehicle_mileage_km: number;
   expected_price_clp: number;
+  campaign_name?: string | null;
+  campaign_code?: string | null;
   vehicle_description?: string | null;
   conversation_summary?: string | null;
   internal_notes?: string | null;
@@ -94,6 +96,8 @@ export type VehicleProposalForm = {
   vehicle_year: string;
   vehicle_mileage_km: string;
   expected_price_clp: string;
+  campaign_name: string;
+  campaign_code: string;
   vehicle_description: string;
   conversation_summary: string;
   internal_notes: string;

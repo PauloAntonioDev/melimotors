@@ -93,6 +93,8 @@ es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 | vehicle_year | smallint | no | Entre 1900 y 2100 |
 | vehicle_mileage_km | integer | si | Mayor o igual a cero |
 | expected_price_clp | bigint | si | Mayor o igual a cero |
+| campaign_name | text | no | Nombre de la campaña publicitaria asociada |
+| campaign_code | text | no | Código alfanumérico normalizado en mayúsculas |
 | vehicle_description | text | no | Datos del vehiculo |
 | conversation_summary | text | no | Resumen del contacto por WhatsApp |
 | internal_notes | text | no | Solo administracion |
