@@ -109,7 +109,8 @@ es `vehicle_detail`. Los leads publicos solo pueden crearse como `nueva`.
 | seller_name | text | si | No vacio |
 | seller_phone | text | si | No vacio; se conserva como texto |
 | seller_email | text | no | Correo opcional |
-| location | text | si | Ciudad o ubicacion, entre 2 y 120 caracteres |
+| region | text | si | Una de las 16 regiones oficiales de Chile |
+| location | text | si | Comuna perteneciente a la región seleccionada |
 | vehicle_plate | text | no | Patente informada por la persona |
 | vehicle_brand | text | si | No vacio |
 | vehicle_model | text | si | No vacio |

@@ -52,7 +52,8 @@ prueba de integracion de la futura aplicacion.
 | AC-045 | Un documento de venta no tiene URL publica y solo un administrador autenticado puede abrirlo mediante un enlace temporal. |
 | AC-046 | Un archivo vacio, de formato no permitido o mayor a 15 MB es rechazado. |
 | AC-047 | El administrador puede eliminar un documento de una venta sin eliminar el registro de la venta. |
-| AC-048 | Una propuesta nueva requiere ciudad o ubicación y la muestra en el listado administrativo. |
+| AC-048 | Una propuesta nueva requiere región y comuna válidas y las muestra en el listado administrativo. |
+| AC-052 | Elegir una región habilita solo sus comunas; cambiar la región limpia la comuna seleccionada. |
 | AC-049 | Un rango comercial incompleto, negativo o con mínimo superior al máximo es rechazado. |
 | AC-050 | La vendibilidad acepta desde 0 hasta 5 puntos en incrementos de 0,5 y rechaza otros valores. |
 | AC-051 | El listado de propuestas muestra los rangos de compra, venta de mercado y la vendibilidad registrada. |

@@ -110,8 +110,8 @@ vigente.
 
 **Precondicion:** usuario autenticado con rol `admin`.
 
-**Flujo:** registra contacto, ciudad o ubicacion, modalidad, datos del vehiculo,
-precio esperado, resumen de la conversacion y notas internas. Opcionalmente
+**Flujo:** selecciona region y comuna, registra contacto, modalidad, datos del
+vehiculo, precio esperado, resumen de la conversacion y notas internas. Opcionalmente
 asocia la propuesta a una campaña publicitaria mediante su nombre y codigo
 alfanumerico. Puede evaluar rangos de compra para el negocio y venta de mercado,
 ademas de calificar la vendibilidad entre 0 y 5 puntos.

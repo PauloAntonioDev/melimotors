@@ -28,6 +28,7 @@ import {
 import { demoLeads, demoVehicles, vehicleImage } from "@/lib/demo-data";
 import AdminProposals from "@/components/admin-proposals";
 import AdminSales from "@/components/admin-sales";
+import { isValidChileLocation } from "@/lib/chile-locations";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import type {
   Lead,
@@ -550,6 +551,7 @@ export default function AdminPage() {
     const optionalNumeric = (value: string) => value.trim() ? Number(value) : null;
     const digits = proposal.seller_phone.replace(/\D/g, "");
     const campaignCode = proposal.campaign_code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    const proposalRegion = proposal.region.trim();
     const proposalLocation = proposal.location.trim();
     const businessPurchaseMin = optionalNumeric(proposal.business_purchase_price_min_clp);
     const businessPurchaseMax = optionalNumeric(proposal.business_purchase_price_max_clp);
@@ -564,8 +566,8 @@ export default function AdminPage() {
       setNotice("Ingresa el código alfanumérico de la campaña.");
       return false;
     }
-    if (proposalLocation.length < 2) {
-      setNotice("Ingresa la ciudad o ubicación de la propuesta.");
+    if (!isValidChileLocation(proposalRegion, proposalLocation)) {
+      setNotice("Selecciona una región y una ciudad o comuna válida.");
       return false;
     }
     if ((businessPurchaseMin === null) !== (businessPurchaseMax === null)) {
@@ -595,6 +597,7 @@ export default function AdminPage() {
         ...proposal,
         campaign_name: proposal.campaign_name.trim() || null,
         campaign_code: campaignCode || null,
+        region: proposalRegion,
         location: proposalLocation,
         whatsapp_id: whatsappId,
         status: "nueva",
@@ -621,6 +624,7 @@ export default function AdminPage() {
       seller_name: proposal.seller_name,
       seller_phone: proposal.seller_phone,
       seller_email: proposal.seller_email || null,
+      region: proposalRegion,
       location: proposalLocation,
       vehicle_plate: proposal.vehicle_plate || null,
       vehicle_brand: proposal.vehicle_brand,
